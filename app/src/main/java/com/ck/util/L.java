@@ -6,13 +6,15 @@ import java.util.Locale;
 
 /*定制日志工具*/
 public class L {
+
+    public static int level = L.DEBUG;
+
     public static final int VERBOSE = 1;
     public static final int DEBUG = 2;
     public static final int INFO = 3;
     public static final int WARN = 4;
     public static final int ERROR = 5;
     public static final int NOTHING = 6;
-    public static int level = VERBOSE;
 
     public static void v(String tag, String msg) {
         if (level <= VERBOSE) {
@@ -44,71 +46,53 @@ public class L {
         }
     }
 
+    private static String TAG;
+    private static String classInfo;
+
     public static void v(String msg) {
         if (level <= VERBOSE) {
-            Log.v(getTag(), buildMessage(msg));
+            setStackTraceElement();
+            Log.v(TAG, classInfo + msg);
         }
     }
 
     public static void d(String msg) {
         if (level <= DEBUG) {
-            Log.d(getTag(), buildMessage(msg));
+            setStackTraceElement();
+            Log.d(TAG, classInfo + msg);
         }
     }
 
     public static void i(String msg) {
         if (level <= INFO) {
-            Log.i(getTag(), buildMessage(msg));
+            setStackTraceElement();
+            Log.i(TAG, classInfo + msg);
         }
     }
 
     public static void w(String msg) {
         if (level <= WARN) {
-            Log.w(getTag(), buildMessage(msg));
+            setStackTraceElement();
+            Log.w(TAG, classInfo + msg);
         }
     }
 
     public static void e(String msg) {
         if (level <= ERROR) {
-            Log.e(getTag(), buildMessage(msg));
+            setStackTraceElement();
+            Log.e(TAG, classInfo + msg);
         }
-    }
-    private StackTraceElement stackTraceElement=null;
-    private StackTraceElement getStackTraceElement(){
-        StackTraceElement[] trace = new Throwable().fillInStackTrace().getStackTrace();
-        String callingClass = "";
-        for (int i = 2; i < trace.length; i++) {
-            Class<?> clazz = trace[i].getClass();
-            if (!clazz.equals(L.class)) {
-                stackTraceElement = trace[i];
-                break;
-            }
-        }
-    }
-    private static String getTag() {
-        StackTraceElement[] trace = new Throwable().fillInStackTrace().getStackTrace();
-        String callingClass = "";
-        for (int i = 2; i < trace.length; i++) {
-            Class<?> clazz = trace[i].getClass();
-            if (!clazz.equals(L.class)) {
-                callingClass = trace[i].getClassName();
-                callingClass = callingClass.substring(callingClass.lastIndexOf('.') + 1);
-                break;
-            }
-        }
-        return callingClass;
     }
 
-    private static String buildMessage(String msg) {
-        StackTraceElement[] trace = new Throwable().fillInStackTrace().getStackTrace();
-        String caller = "";
-        for (int i = 2; i < trace.length; i++) {
-            Class<?> clazz = trace[i].getClass();
-            if (!clazz.equals(L.class)) {
-                caller = trace[i].getClassName() + "." + trace[i].getMethodName() + "(" + trace[i].getFileName() + ":" + trace[i].getLineNumber() + ")";
+    private static void setStackTraceElement() {
+        StackTraceElement[] traces = new Throwable().fillInStackTrace().getStackTrace();
+        for (int i = 2; i < traces.length; i++) {
+            String className = traces[i].getClassName();
+            if (!className.equals(L.class.getName())) {
+                TAG = className.substring(className.lastIndexOf('.') + 1);
+                classInfo = String.format(Locale.US, "[%d] %s.%s(%s:%s) ", Thread.currentThread().getId(), traces[i].getClassName(), traces[i].getMethodName(), traces[i].getFileName(), traces[i].getLineNumber());
                 break;
             }
         }
-        return String.format(Locale.US, "[%d] %s %s", Thread.currentThread().getId(), caller, msg);
     }
 }
