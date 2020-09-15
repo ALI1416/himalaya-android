@@ -2,7 +2,6 @@ package com.ck.base;
 
 import android.app.Application;
 
-import com.ck.util.L;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 
