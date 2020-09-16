@@ -17,6 +17,7 @@ public class IndicatorAdapter extends CommonNavigatorAdapter {
 
 
     private final String[] mTitles;
+    private OnIndicatorTapClickListener mOnTapClickListener;
 
     public IndicatorAdapter(Context context) {
         mTitles = context.getResources().getStringArray(R.array.indicator_title);
@@ -30,16 +31,21 @@ public class IndicatorAdapter extends CommonNavigatorAdapter {
         return 0;
     }
 
+    /**
+     * 标题
+     */
     @Override
     public IPagerTitleView getTitleView(Context context, final int index) {
         SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
-        simplePagerTitleView.setNormalColor(Color.GRAY);
-        simplePagerTitleView.setSelectedColor(Color.WHITE);
-        simplePagerTitleView.setText(mTitles[index]);
-        simplePagerTitleView.setOnClickListener(new View.OnClickListener() {
+        simplePagerTitleView.setNormalColor(Color.GRAY);//未选中
+        simplePagerTitleView.setSelectedColor(Color.WHITE);//选中
+        simplePagerTitleView.setText(mTitles[index]);//显示内容
+        simplePagerTitleView.setOnClickListener(new View.OnClickListener() {//设置标题点击事件
             @Override
             public void onClick(View v) {
-                // TODO: 2020/9/15  
+                if (mOnTapClickListener != null) {
+                    mOnTapClickListener.onTabClick(index);
+                }
             }
         });
         return simplePagerTitleView;
@@ -51,5 +57,19 @@ public class IndicatorAdapter extends CommonNavigatorAdapter {
         linePagerIndicator.setMode(LinePagerIndicator.MODE_WRAP_CONTENT);
         linePagerIndicator.setColors(Color.WHITE);
         return linePagerIndicator;
+    }
+
+    /**
+     * 设置标题监听
+     */
+    public void setOnIndicatorTapClickListener(OnIndicatorTapClickListener listener) {
+        this.mOnTapClickListener = listener;
+    }
+
+    /**
+     * 暴露接口，点击标题时可以切换内容
+     */
+    public interface OnIndicatorTapClickListener {
+        void onTabClick(int index);
     }
 }

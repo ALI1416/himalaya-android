@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
@@ -23,6 +22,7 @@ public class MainActivity extends FragmentActivity {
 
     private MagicIndicator mMagicIndicator;
     private ViewPager mContentPager;
+    private IndicatorAdapter mIndicatorAdapter;
 
     private void log(String msg) {
         Log.d(TAG, msg);
@@ -37,6 +37,19 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+        initEven();
+    }
+
+    private void initEven() {
+        //标题点击事件
+        mIndicatorAdapter.setOnIndicatorTapClickListener(new IndicatorAdapter.OnIndicatorTapClickListener() {
+            @Override
+            public void onTabClick(int index) {
+                if (mContentPager != null) {
+                    mContentPager.setCurrentItem(index);
+                }
+            }
+        });
     }
 
     private void initView() {
@@ -44,9 +57,10 @@ public class MainActivity extends FragmentActivity {
         mMagicIndicator = findViewById(R.id.indicator);
         mMagicIndicator.setBackgroundColor(getResources().getColor(R.color.colorMain));
         //创建导航栏indicator适配器
-        IndicatorAdapter indicatorAdapter = new IndicatorAdapter(this);
+        mIndicatorAdapter = new IndicatorAdapter(this);
         CommonNavigator commonNavigator = new CommonNavigator(this);
-        commonNavigator.setAdapter(indicatorAdapter);
+        commonNavigator.setAdjustMode(true);//设置标题自动调节
+        commonNavigator.setAdapter(mIndicatorAdapter);
         //展示页面ViewPager
         mContentPager = findViewById(R.id.content_pager);
         //创建内容适配器

@@ -1,18 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     >
 
-    <net.lucode.hackware.magicindicator.MagicIndicator
-        android:id="@+id/indicator"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        />
+        android:orientation="horizontal"
+        android:background="@color/colorMain"
+        >
 
+        <net.lucode.hackware.magicindicator.MagicIndicator
+            android:id="@+id/indicator"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            >
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerInParent="true"
+                android:src="@mipmap/ic_launcher"
+                />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <!--android:overScrollMode="never"滚动超过边界时去除颜色-->
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/content_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:overScrollMode="never"
         />
-</RelativeLayout>
+</LinearLayout>
