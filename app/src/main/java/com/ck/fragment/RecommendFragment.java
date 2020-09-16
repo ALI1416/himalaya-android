@@ -11,6 +11,8 @@ import com.ck.R;
 import com.ck.adapter.RecommendListAdapter;
 import com.ck.base.BaseFragment;
 import com.ck.constant.RecommendConstant;
+import com.ck.interfaces.IRecommendViewCallback;
+import com.ck.presenter.RecommendPresenter;
 import com.ck.util.L;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
@@ -23,10 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RecommendFragment extends BaseFragment {
+public class RecommendFragment extends BaseFragment implements IRecommendViewCallback {
     private View mRootView;
     private RecyclerView mRecommendRecyclerView;
     private RecommendListAdapter mRecommendListAdapter;
+    private RecommendPresenter mRecommendPresenter;
 
     @Override
     protected View onSubViewLoaded(LayoutInflater layoutInflater, ViewGroup container) {
@@ -37,57 +40,52 @@ public class RecommendFragment extends BaseFragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecommendRecyclerView.setLayoutManager(linearLayoutManager);
+        /*偏移已经在layout里设置过了*/
+//        mRecommendRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+//            /*getItemOffsets设置layout元素偏移*/
+//            @Override
+//            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+//                /*UIUtil.dip2px工具类，dp2px,px2dp*/
+//                outRect.top = UIUtil.dip2px(view.getContext(), 5);
+//                outRect.bottom = UIUtil.dip2px(view.getContext(), 5);
+//                outRect.left = UIUtil.dip2px(view.getContext(), 5);
+//                outRect.right = UIUtil.dip2px(view.getContext(), 5);
+//            }
+//        });
         //适配器
         mRecommendListAdapter = new RecommendListAdapter();
         mRecommendRecyclerView.setAdapter(mRecommendListAdapter);
-        //取数据
-        getRecommendData2();
+        //获取到逻辑层的对象
+        mRecommendPresenter = RecommendPresenter.getInstance();
+        //设置通知接口的注册
+        mRecommendPresenter.registerViewCallback(this);
+        //获取推荐列表
+        mRecommendPresenter.getRecommendList();
         return mRootView;
     }
 
-    private void getRecommendData2() {
-        List<Album> albumList = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            Album album = new Album();
-            album.setAlbumTitle(i + "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊");
-            album.setAlbumIntro(i + "哈哈哈哈哈哈或或或或或哈哈哈哈哈哈啊哈哈哈");
-            album.setPlayCount(i);
-            album.setIncludeTrackCount(20 - i);
-            album.setCoverUrlLarge("https://himg.bdimg.com/sys/portrait/item/pp.1.a6246271.hPNvzMm7d_71DIWDOusXCw?_t=1600244882165");
-            albumList.add(album);
+    @Override
+    public void onRecommendListLoaded(List<Album> result) {
+        //获取到推荐内容时，这个方法就被调用了，去更新UI
+        mRecommendListAdapter.setData(result);
+    }
+
+    @Override
+    public void onLoadedMore(List<Album> result) {
+
+    }
+
+    @Override
+    public void onRefresh(List<Album> result) {
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //取消接口注册，避免内存泄露
+        if (mRecommendPresenter != null) {
+            mRecommendPresenter.unRegisterViewCallback(this);
         }
-        updateRecommendUI(albumList);
     }
-
-    /**
-     * 获取推荐内容（猜你喜欢）
-     */
-    private void getRecommendData() {
-        Map<String, String> map = new HashMap<>();
-        //一页数据返回条数
-        map.put(DTransferConstants.LIKE_COUNT, String.valueOf(RecommendConstant.RECOMMEND_COUNT));
-        CommonRequest.getGuessLikeAlbum(map, new IDataCallBack<GussLikeAlbumList>() {
-            @Override
-            public void onSuccess(GussLikeAlbumList gussLikeAlbumList) {
-                if (gussLikeAlbumList != null) {
-                    List<Album> albumList = gussLikeAlbumList.getAlbumList();
-                    updateRecommendUI(albumList);
-                    for (Album album : albumList) {
-                        L.d(album.toString());
-                    }
-                }
-            }
-
-            @Override
-            public void onError(int i, String s) {
-                L.e("errorCode-->" + i);
-                L.e("errorMsg-->" + s);
-            }
-        });
-    }
-
-    private void updateRecommendUI(List<Album> albumList) {
-        mRecommendListAdapter.setData(albumList);
-    }
-
 }

@@ -4,5 +4,5 @@ public class RecommendConstant {
     /**
      * 推荐数量
      */
-    public static final int RECOMMEND_COUNT = 20;
+    public static final int RECOMMEND_COUNT = 50;
 }

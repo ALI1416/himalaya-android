@@ -66,8 +66,8 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
             Glide.with(itemView.getContext()).load(album.getCoverUrlLarge()).into(image);
             title.setText(album.getAlbumTitle());
             content.setText(album.getAlbumIntro());
-            playCount.setText(Long.toString(album.getPlayCount()));
-            playEpisode.setText(Long.toString(album.getIncludeTrackCount()));
+            playCount.setText(album.getPlayCount() + "次");
+            playEpisode.setText(album.getIncludeTrackCount() + "集");
         }
     }
 }
