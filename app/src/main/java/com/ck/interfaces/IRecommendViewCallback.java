@@ -16,16 +16,17 @@ public interface IRecommendViewCallback {
     void onRecommendListLoaded(List<Album> result);
 
     /**
-     * 获取到了加载更多的内容
-     *
-     * @param result
+     * 网络异常
      */
-    void onLoadedMore(List<Album> result);
+    void networkError();
 
     /**
-     * 获取到了刷新后的内容
-     *
-     * @param result
+     * 数据为空
      */
-    void onRefresh(List<Album> result);
+    void onEmpty();
+
+    /**
+     * 正在加载
+     */
+    void onLoading();
 }

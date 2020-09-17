@@ -7,17 +7,7 @@ public interface IRecommendPresenter {
     /**
      * 获取推荐列表
      */
-    void getRecommendList();
-
-    /**
-     * 下拉刷新
-     */
-    void pullRefresh();
-
-    /**
-     * 上拉加载更多
-     */
-    void loadMore();
+    void getRecommendList() throws InterruptedException;
 
     /**
      * 注册UI的回调

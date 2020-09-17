@@ -1,11 +1,15 @@
 package com.ck.base;
 
 import android.app.Application;
+import android.os.Handler;
 
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 
 public class BaseApplication extends Application {
+
+    private static Handler sHandler = null;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -22,5 +26,15 @@ public class BaseApplication extends Application {
             mXimalaya.setPackid("com.ximalaya.qunfeng");
             mXimalaya.init(this, mAppSecret);
         }
+        sHandler = new Handler();
+    }
+
+    /**
+     * 获得主线程Handler，可以去更新UI
+     *
+     * @return
+     */
+    public static Handler getHandler() {
+        return sHandler;
     }
 }
