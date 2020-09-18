@@ -1,5 +1,6 @@
 package com.ck.fragment;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,10 +8,12 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ck.DetailActivity;
 import com.ck.R;
 import com.ck.adapter.RecommendListAdapter;
 import com.ck.base.BaseFragment;
 import com.ck.interfaces.IRecommendViewCallback;
+import com.ck.presenter.AlbumDetailPresenter;
 import com.ck.presenter.RecommendPresenter;
 import com.ck.util.L;
 import com.ck.view.UILoader;
@@ -18,7 +21,10 @@ import com.ximalaya.ting.android.opensdk.model.album.Album;
 
 import java.util.List;
 
-public class RecommendFragment extends BaseFragment implements IRecommendViewCallback {
+public class RecommendFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnUILoadClickListener {
+    private static final String TAG = "RecommendFragment";
+    private RecommendFragment _this = this;
+
     private View mRootView;
     private RecyclerView mRecommendRecyclerView;
     private RecommendListAdapter mRecommendListAdapter;
@@ -43,6 +49,7 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         if (mUILoader.getParent() instanceof ViewGroup) {
             ((ViewGroup) mUILoader.getParent()).removeView(mUILoader);//父类解绑自己
         }
+        mUILoader.setOnReload(this);
         return mUILoader;
     }
 
@@ -69,6 +76,16 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         //适配器
         mRecommendListAdapter = new RecommendListAdapter();
         mRecommendRecyclerView.setAdapter(mRecommendListAdapter);
+        //可以使用内部匿名类来实现接口
+        mRecommendListAdapter.setOnRecommendItemClickListener(new RecommendListAdapter.OnRecommendItemClickListener() {
+            @Override
+            public void onItemClick(int position, Album album) {
+                AlbumDetailPresenter.getInstance().setTargetAlbum(album);//设置专辑内容
+                L.d(String.valueOf(position));
+                Intent intent = new Intent(getContext(), DetailActivity.class);
+                startActivity(intent);
+            }
+        });
         return mRootView;
     }
 
@@ -100,6 +117,28 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         //取消接口注册，避免内存泄露
         if (mRecommendPresenter != null) {
             mRecommendPresenter.unRegisterViewCallback(this);
+        }
+    }
+
+    /**
+     * 无网络，点击屏幕重试
+     */
+    @Override
+    public void onNetworkErrorClick() {
+        //重新获取数据
+        if (mRecommendPresenter != null) {
+            mRecommendPresenter.getRecommendList();
+        }
+    }
+
+    /**
+     * 内容为空，点击屏幕重试
+     */
+    @Override
+    public void onEmptyClick() {
+        //重新获取数据
+        if (mRecommendPresenter != null) {
+            mRecommendPresenter.getRecommendList();
         }
     }
 }

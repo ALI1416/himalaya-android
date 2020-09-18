@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#66ccff"
+    android:orientation="vertical"
+    >
+
+    <ImageView
+        android:id="@+id/detail_cover_bg"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@color/colorAccent"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/detail_cover_bg"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="-50dp"
+        >
+
+        <com.ck.view.RoundRectImageView
+            android:id="@+id/detail_head_bg"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@color/colorPrimary"
+            />
+
+        <TextView
+            android:id="@+id/detail_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@id/detail_head_bg"
+            android:text="标题"
+            android:textSize="25sp"
+            />
+
+        <TextView
+            android:id="@+id/detail_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="55dp"
+            android:layout_toRightOf="@id/detail_head_bg"
+            android:text="作者"
+            android:textSize="15sp"
+            />
+    </RelativeLayout>
+
+</RelativeLayout>

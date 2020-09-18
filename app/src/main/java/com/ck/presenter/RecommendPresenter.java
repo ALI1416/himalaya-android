@@ -24,11 +24,6 @@ public class RecommendPresenter implements IRecommendPresenter {
 
     private static RecommendPresenter sInstance = null;
 
-    /**
-     * 懒汉式单例模式
-     *
-     * @return
-     */
     public static RecommendPresenter getInstance() {
         if (sInstance == null) {
             synchronized (RecommendPresenter.class) {
@@ -112,10 +107,9 @@ public class RecommendPresenter implements IRecommendPresenter {
 
     /**
      * 获得返回结果
-     *
-     * @param albumList
      */
     private void handleRecommendResult(List<Album> albumList) {
+//        albumList.clear();//测试数据为空的情况
         //通知UI更新页面
         if (albumList != null) {
             if (albumList.size() == 0) {//结果为空
@@ -132,8 +126,6 @@ public class RecommendPresenter implements IRecommendPresenter {
 
     /**
      * 注册view监听器
-     *
-     * @param callback
      */
     @Override
     public void registerViewCallback(IRecommendViewCallback callback) {
@@ -144,8 +136,6 @@ public class RecommendPresenter implements IRecommendPresenter {
 
     /**
      * 注销view监听器
-     *
-     * @param callback
      */
     @Override
     public void unRegisterViewCallback(IRecommendViewCallback callback) {

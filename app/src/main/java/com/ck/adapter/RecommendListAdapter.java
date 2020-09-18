@@ -18,7 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdapter.InnerHolder> {
+    private static final String TAG = "RecommendListAdapter";
+    private RecommendListAdapter _this = this;
+
     private List<Album> mData = new ArrayList<>();
+    private OnRecommendItemClickListener mItemClickListener;
 
     @NonNull
     @Override
@@ -32,6 +36,15 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
         /*itemView在ViewHolder中已经保存，在onCreateViewHolder中的layout就是*/
         holder.itemView.setTag(position);//设置标记
         holder.setData(mData.get(position));//设置数据
+        holder.itemView.setOnClickListener(new View.OnClickListener() {//设置点击item监听
+            @Override
+            public void onClick(View v) {
+                if (mItemClickListener != null) {
+                    int clickPosition = (int) v.getTag();
+                    mItemClickListener.onItemClick(clickPosition, mData.get(clickPosition));
+                }
+            }
+        });
     }
 
     @Override
@@ -69,5 +82,13 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
             playCount.setText(album.getPlayCount() + "次");
             playEpisode.setText(album.getIncludeTrackCount() + "集");
         }
+    }
+
+    public void setOnRecommendItemClickListener(OnRecommendItemClickListener listener) {
+        mItemClickListener = listener;
+    }
+
+    public interface OnRecommendItemClickListener {
+        void onItemClick(int position, Album album);
     }
 }

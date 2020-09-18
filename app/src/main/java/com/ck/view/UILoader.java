@@ -12,6 +12,8 @@ import androidx.annotation.Nullable;
 
 import com.ck.R;
 import com.ck.base.BaseApplication;
+import com.ck.fragment.RecommendFragment;
+import com.ck.util.L;
 
 public abstract class UILoader extends FrameLayout {
 
@@ -19,6 +21,8 @@ public abstract class UILoader extends FrameLayout {
     private View mSuccessView;
     private View mEmptyView;
     private View mNetworkView;
+    private OnUILoadClickListener mOnUILoadClickListener;
+
 
     /**
      * UI页面的几种状态
@@ -33,7 +37,7 @@ public abstract class UILoader extends FrameLayout {
     public UIStatus mCurrentStatus = UIStatus.NONE;
 
     public UILoader(@NonNull Context context) {
-        this(context, null);
+        this(context, null, 0);
     }
 
     public UILoader(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -64,7 +68,7 @@ public abstract class UILoader extends FrameLayout {
     }
 
     /**
-     * 从当前状态中选择加载的页面
+     * 加载所有页面，并从当前状态中选择哪个页面可见
      */
     private void switchUIByCurrentStatus() {
         //加载中
@@ -99,11 +103,41 @@ public abstract class UILoader extends FrameLayout {
 
     protected abstract View getSuccessView(ViewGroup container);
 
-    private View getEmptyView() {
-        return LayoutInflater.from(getContext()).inflate(R.layout.fragment_empty_view, this, false);
+    private View getNetworkErrorView() {
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_network_error_view, this, false);
+        //点击屏幕重新加载
+        view.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnUILoadClickListener != null) {
+                    mOnUILoadClickListener.onNetworkErrorClick();
+                }
+            }
+        });
+        return view;
     }
 
-    private View getNetworkErrorView() {
-        return LayoutInflater.from(getContext()).inflate(R.layout.fragment_network_error_view, this, false);
+    private View getEmptyView() {
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_empty_view, this, false);
+        //点击屏幕重新加载
+        view.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnUILoadClickListener != null) {
+                    mOnUILoadClickListener.onEmptyClick();
+                }
+            }
+        });
+        return view;
+    }
+
+    public void setOnReload(OnUILoadClickListener listener) {
+        this.mOnUILoadClickListener = listener;
+    }
+
+    public interface OnUILoadClickListener {
+        void onNetworkErrorClick();
+
+        void onEmptyClick();
     }
 }
