@@ -1,5 +1,6 @@
 package com.ck.interfaces;
 
+import com.ximalaya.ting.android.opensdk.model.album.Album;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 
 import java.util.List;
@@ -10,8 +11,11 @@ import java.util.List;
 public interface IAlbumDetailViewCallback {
     /**
      * 加载到了专辑内容
-     *
-     * @param tracks
      */
     void onDetailListLoaded(List<Track> tracks);
+
+    /**
+     * 加载到了一个的详情
+     */
+    void onAlbumLoader(Album album);
 }

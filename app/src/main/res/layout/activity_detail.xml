@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#66ccff"
+    android:background="#fff"
     android:orientation="vertical"
     >
 
@@ -10,22 +10,25 @@
         android:id="@+id/detail_cover_bg"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:src="@color/colorAccent"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/ic_launcher"
         />
 
     <RelativeLayout
+        android:id="@+id/detail_info"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_below="@id/detail_cover_bg"
-        android:layout_marginLeft="10dp"
         android:layout_marginTop="-50dp"
+        android:paddingLeft="10dp"
         >
 
         <com.ck.view.RoundRectImageView
             android:id="@+id/detail_head_bg"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@color/colorPrimary"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_launcher"
             />
 
         <TextView
@@ -39,16 +42,90 @@
             android:textSize="25sp"
             />
 
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="60dp"
+            android:layout_toRightOf="@id/detail_head_bg"
+            android:src="@mipmap/author_icon"
+            />
+
         <TextView
             android:id="@+id/detail_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="55dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginTop="60dp"
             android:layout_toRightOf="@id/detail_head_bg"
             android:text="作者"
             android:textSize="15sp"
             />
+
+        <Button
+            android:layout_width="75dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/shape_subscription_btn_bg"
+            android:text="+订阅"
+            android:textColor="#fff"
+            />
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/detail_control"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/detail_info"
+        android:layout_marginTop="1dp"
+        android:background="#f0f0f0"
+        android:paddingLeft="10dp"
+        >
+
+        <ImageView
+            android:id="@+id/detail_play_btn"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/play_black_normal"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/detail_play_btn"
+            android:paddingLeft="5dp"
+            android:text="继续播放"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="25dp"
+            android:text="选集"
+            />
+
+        <ImageView
+            android:layout_width="10dp"
+            android:layout_height="5dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@mipmap/arrow_icon"
+            />
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/detail_control"
+        >
+
+    </androidx.recyclerview.widget.RecyclerView>
 </RelativeLayout>

@@ -27,7 +27,9 @@ android {
         }
     }
 }
-
+repositories {
+    jcenter()
+}
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -38,6 +40,8 @@ dependencies {
     implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
+    //glide插件 https://github.com/wasabeef/glide-transformations 增加了圆角、模糊等
+    implementation 'jp.wasabeef:glide-transformations:4.2.0'
     implementation files('libs/TingPhoneOpenSDK_7.2.6.jar')
     implementation files('libs/XmDownload_2.0.jar')
     implementation files('libs/XmlyOAuth2SDK_V2.0.jar')

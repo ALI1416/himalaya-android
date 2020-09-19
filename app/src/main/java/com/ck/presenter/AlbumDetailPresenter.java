@@ -50,6 +50,9 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
     public void registerViewCallback(IAlbumDetailViewCallback callback) {
         if (mCallbacks != null && !mCallbacks.contains(callback)) {
             mCallbacks.add(callback);
+            if (mTargetAlbum != null) {
+                callback.onAlbumLoader(mTargetAlbum);
+            }
         }
     }
 
@@ -65,6 +68,7 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
 
     /**
      * 设置专辑内容
+     *
      * @param targetAlbum
      */
     public void setTargetAlbum(Album targetAlbum) {
