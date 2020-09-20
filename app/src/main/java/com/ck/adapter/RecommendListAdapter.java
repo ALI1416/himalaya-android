@@ -76,7 +76,7 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
             TextView content = itemView.findViewById(R.id.recommend_item_content);
             TextView playCount = itemView.findViewById(R.id.recommend_item_play_count);
             TextView playEpisode = itemView.findViewById(R.id.recommend_item_play_episode);
-            Glide.with(itemView.getContext()).load(album.getCoverUrlLarge()).into(image);
+            Glide.with(itemView.getContext()).load(album.getCoverUrlSmall()).into(image);
             title.setText(album.getAlbumTitle());
             content.setText(album.getAlbumIntro());
             playCount.setText(album.getPlayCount() + "次");

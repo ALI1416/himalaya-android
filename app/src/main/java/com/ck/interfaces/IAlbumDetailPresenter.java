@@ -4,7 +4,7 @@ public interface IAlbumDetailPresenter {
     /**
      * 获取专辑详情
      */
-    void getAlbumDetail(int albumId, int pages, int rows);
+    void getAlbumDetail(long albumId, int pages, int rows);
 
     /**
      * 下拉刷新

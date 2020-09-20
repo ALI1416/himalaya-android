@@ -7,12 +7,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.MultiTransformation;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.ck.adapter.DetailAlbumListAdapter;
 import com.ck.base.BaseActivity;
+import com.ck.constant.RecommendConstant;
 import com.ck.interfaces.IAlbumDetailViewCallback;
 import com.ck.presenter.AlbumDetailPresenter;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
@@ -30,6 +32,9 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     private TextView mDetailTitle;
     private TextView mDetailAuthor;
     private AlbumDetailPresenter mAlbumDetailPresenter;
+    private int mCurrentPages = 1;//专辑列表，默认第一页
+    private RecyclerView mDetailAlbumRecyclerView;
+    private DetailAlbumListAdapter mDetailAlbumListAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,11 +52,17 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         mDetailHeadBg = findViewById(R.id.detail_head_bg);
         mDetailTitle = findViewById(R.id.detail_title);
         mDetailAuthor = findViewById(R.id.detail_author);
+        mDetailAlbumRecyclerView = findViewById(R.id.detail_album_recycle_view);
+        //RecyclerView布局管理和适配器
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mDetailAlbumRecyclerView.setLayoutManager(layoutManager);
+        mDetailAlbumListAdapter = new DetailAlbumListAdapter();
+        mDetailAlbumRecyclerView.setAdapter(mDetailAlbumListAdapter);
     }
 
     @Override
     public void onDetailListLoaded(List<Track> tracks) {
-
+        mDetailAlbumListAdapter.setData(tracks);
     }
 
     @Override
@@ -76,5 +87,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
                     .load(album.getCoverUrlSmall())
                     .into(mDetailHeadBg);
         }
+        //获取专辑详情
+        mAlbumDetailPresenter.getAlbumDetail(album.getId(), mCurrentPages, RecommendConstant.COUNT_ALBUM);
     }
 }

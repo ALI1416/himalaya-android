@@ -4,10 +4,12 @@ public class RecommendConstant {
     /**
      * 推荐数量
      */
-    public static final int RECOMMEND_COUNT = 50;
+    public static final int COUNT_RECOMMEND = 50;
 
-    //默认列表请求数量
-    public static int COUNT_DEFAULT = 50;
+    /**
+     * 专辑一页显示数量
+     */
+    public static int COUNT_ALBUM = 20;
 
     //热词的数量
     public static int COUNT_HOT_WORD = 10;

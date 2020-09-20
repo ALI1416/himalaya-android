@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff"
@@ -20,7 +21,7 @@
         android:layout_height="100dp"
         android:layout_below="@id/detail_cover_bg"
         android:layout_marginTop="-50dp"
-        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
         >
 
         <com.ck.view.RoundRectImageView
@@ -35,19 +36,21 @@
             android:id="@+id/detail_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:layout_toRightOf="@id/detail_head_bg"
-            android:text="标题"
+            android:layout_toEndOf="@id/detail_head_bg"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="标题标题标题标题标题标题标题标题标题标题标题"
             android:textSize="25sp"
             />
 
         <ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="60dp"
-            android:layout_toRightOf="@id/detail_head_bg"
+            android:layout_toEndOf="@id/detail_head_bg"
             android:src="@mipmap/author_icon"
             />
 
@@ -55,9 +58,9 @@
             android:id="@+id/detail_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="35dp"
+            android:layout_marginStart="35dp"
             android:layout_marginTop="60dp"
-            android:layout_toRightOf="@id/detail_head_bg"
+            android:layout_toEndOf="@id/detail_head_bg"
             android:text="作者"
             android:textSize="15sp"
             />
@@ -65,9 +68,9 @@
         <Button
             android:layout_width="75dp"
             android:layout_height="30dp"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginBottom="5dp"
             android:background="@drawable/shape_subscription_btn_bg"
             android:text="+订阅"
@@ -82,7 +85,8 @@
         android:layout_below="@id/detail_info"
         android:layout_marginTop="1dp"
         android:background="#f0f0f0"
-        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
+        tools:ignore="RtlSymmetry"
         >
 
         <ImageView
@@ -97,34 +101,37 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/detail_play_btn"
-            android:paddingLeft="5dp"
+            android:layout_toEndOf="@id/detail_play_btn"
+            android:paddingStart="5dp"
             android:text="继续播放"
             />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:paddingRight="25dp"
+            android:paddingEnd="25dp"
             android:text="选集"
             />
 
         <ImageView
             android:layout_width="10dp"
             android:layout_height="5dp"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:src="@mipmap/arrow_icon"
             />
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/detail_album_recycle_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/detail_control"
+        android:background="#f0f0f0"
+        android:overScrollMode="never"
         >
 
     </androidx.recyclerview.widget.RecyclerView>

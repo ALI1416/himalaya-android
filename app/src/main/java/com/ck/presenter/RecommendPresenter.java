@@ -8,6 +8,7 @@ import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
+import com.ximalaya.ting.android.opensdk.model.album.Announcer;
 import com.ximalaya.ting.android.opensdk.model.album.GussLikeAlbumList;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class RecommendPresenter implements IRecommendPresenter {
     @Override
     public void getRecommendList() {
         updateLoading();
-        getData();
+        getData2();
     }
 
     /**
@@ -49,13 +50,17 @@ public class RecommendPresenter implements IRecommendPresenter {
      */
     private void getData2() {
         List<Album> albumList = new ArrayList<>();
-        for (int i = 0; i < RecommendConstant.RECOMMEND_COUNT; i++) {
+        for (int i = 0; i < RecommendConstant.COUNT_RECOMMEND; i++) {
             Album album = new Album();
+            album.setId(1);
             album.setAlbumTitle(i + "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊");
             album.setAlbumIntro(i + "哈哈哈哈哈哈或或或或或哈哈哈哈哈哈啊哈哈");
             album.setPlayCount(i);
-            album.setIncludeTrackCount(RecommendConstant.RECOMMEND_COUNT - i);
-            album.setCoverUrlLarge("https://himg.bdimg.com/sys/portrait/item/pp.1.a6246271.hPNvzMm7d_71DIWDOusXCw?_t=1600244882165");
+            album.setIncludeTrackCount(RecommendConstant.COUNT_RECOMMEND - i);
+            album.setCoverUrlSmall("https://himg.bdimg.com/sys/portrait/item/pp.1.a6246271.hPNvzMm7d_71DIWDOusXCw?_t=1600244882165");
+            Announcer announcer = new Announcer();
+            announcer.setNickname("作者");
+            album.setAnnouncer(announcer);
             albumList.add(album);
         }
         handleRecommendResult(albumList);
@@ -66,7 +71,7 @@ public class RecommendPresenter implements IRecommendPresenter {
      */
     private void getData() {
         Map<String, String> map = new HashMap<>();
-        map.put(DTransferConstants.LIKE_COUNT, String.valueOf(RecommendConstant.RECOMMEND_COUNT));//LIKE_COUNT一页数据返回条数
+        map.put(DTransferConstants.LIKE_COUNT, String.valueOf(RecommendConstant.COUNT_RECOMMEND));//LIKE_COUNT一页数据返回条数
         CommonRequest.getGuessLikeAlbum(map, new IDataCallBack<GussLikeAlbumList>() {
             @Override
             public void onSuccess(GussLikeAlbumList gussLikeAlbumList) {

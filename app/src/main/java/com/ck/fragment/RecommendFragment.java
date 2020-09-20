@@ -81,7 +81,6 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
             @Override
             public void onItemClick(int position, Album album) {
                 AlbumDetailPresenter.getInstance().setTargetAlbum(album);//设置专辑内容
-                L.d(String.valueOf(position));
                 Intent intent = new Intent(getContext(), DetailActivity.class);
                 startActivity(intent);
             }

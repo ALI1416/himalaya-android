@@ -2,10 +2,18 @@ package com.ck.presenter;
 
 import com.ck.interfaces.IAlbumDetailPresenter;
 import com.ck.interfaces.IAlbumDetailViewCallback;
+import com.ck.util.L;
+import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
+import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
+import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
+import com.ximalaya.ting.android.opensdk.model.track.Track;
+import com.ximalaya.ting.android.opensdk.model.track.TrackList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AlbumDetailPresenter implements IAlbumDetailPresenter {
 
@@ -29,8 +37,50 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
     }
 
     @Override
-    public void getAlbumDetail(int albumId, int pages, int rows) {
+    public void getAlbumDetail(long albumId, int pages, int rows) {
+        getData2(albumId, pages, rows);
+    }
 
+    private void getData(long albumId, int pages, int rows) {
+        Map<String, String> map = new HashMap<>();
+        map.put(DTransferConstants.ALBUM_ID, String.valueOf(albumId));
+        map.put(DTransferConstants.SORT, "asc");
+        map.put(DTransferConstants.PAGE, String.valueOf(pages));
+        map.put(DTransferConstants.PAGE_SIZE, String.valueOf(rows));
+        CommonRequest.getTracks(map, new IDataCallBack<TrackList>() {
+            @Override
+            public void onSuccess(TrackList trackList) {
+                List<Track> tracks = trackList.getTracks();
+                for (Track track : tracks) {
+                    L.d(track.toString());
+                }
+                handleAlbumDetailResult(tracks);
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                L.e("errorCode-->" + i);
+                L.e("errorMsg-->" + s);
+            }
+        });
+    }
+
+    private void getData2(long albumId, int pages, int rows) {
+        List<Track> tracks = new ArrayList<>();
+        for (int i = 0; i < rows; i++) {
+            Track track = new Track();
+            tracks.add(track);
+        }
+        handleAlbumDetailResult(tracks);
+    }
+
+    /**
+     * 更新专辑列表详情
+     */
+    private void handleAlbumDetailResult(List<Track> tracks) {
+        for (IAlbumDetailViewCallback mCallback : mCallbacks) {
+            mCallback.onDetailListLoaded(tracks);
+        }
     }
 
     @Override
