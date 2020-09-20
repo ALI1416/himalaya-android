@@ -12,8 +12,6 @@ import androidx.annotation.Nullable;
 
 import com.ck.R;
 import com.ck.base.BaseApplication;
-import com.ck.fragment.RecommendFragment;
-import com.ck.util.L;
 
 public abstract class UILoader extends FrameLayout {
 
@@ -28,7 +26,7 @@ public abstract class UILoader extends FrameLayout {
      * UI页面的几种状态
      */
     public enum UIStatus {
-        LOADING, SUCCESS, NOTWORK_ERROR, EMPTY, NONE
+        LOADING, SUCCESS, NETWORK_ERROR, EMPTY, NONE
     }
 
     /**
@@ -94,7 +92,7 @@ public abstract class UILoader extends FrameLayout {
             mNetworkView = getNetworkErrorView();
             addView(mNetworkView);
         }
-        mNetworkView.setVisibility(mCurrentStatus == UIStatus.NOTWORK_ERROR ? VISIBLE : GONE);
+        mNetworkView.setVisibility(mCurrentStatus == UIStatus.NETWORK_ERROR ? VISIBLE : GONE);
     }
 
     private View getLoadingView() {

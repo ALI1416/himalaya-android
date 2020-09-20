@@ -42,7 +42,7 @@ public class RecommendPresenter implements IRecommendPresenter {
     @Override
     public void getRecommendList() {
         updateLoading();
-        getData2();
+        getData();
     }
 
     /**
@@ -99,7 +99,7 @@ public class RecommendPresenter implements IRecommendPresenter {
     private void handleError() {
         if (mCallbacks != null) {
             for (IRecommendViewCallback callback : mCallbacks) {
-                callback.networkError();
+                callback.onNetworkError();
             }
         }
     }

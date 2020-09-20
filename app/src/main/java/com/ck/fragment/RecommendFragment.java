@@ -15,13 +15,12 @@ import com.ck.base.BaseFragment;
 import com.ck.interfaces.IRecommendViewCallback;
 import com.ck.presenter.AlbumDetailPresenter;
 import com.ck.presenter.RecommendPresenter;
-import com.ck.util.L;
 import com.ck.view.UILoader;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
 import java.util.List;
 
-public class RecommendFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnUILoadClickListener {
+public class RecommendFragment extends BaseFragment implements IRecommendViewCallback {
     private static final String TAG = "RecommendFragment";
     private RecommendFragment _this = this;
 
@@ -49,7 +48,29 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         if (mUILoader.getParent() instanceof ViewGroup) {
             ((ViewGroup) mUILoader.getParent()).removeView(mUILoader);//父类解绑自己
         }
-        mUILoader.setOnReload(this);
+        mUILoader.setOnReload(new UILoader.OnUILoadClickListener() {
+            /**
+             * 无网络，点击屏幕重试
+             */
+            @Override
+            public void onNetworkErrorClick() {
+                //重新获取数据
+                if (mRecommendPresenter != null) {
+                    mRecommendPresenter.getRecommendList();
+                }
+            }
+
+            /**
+             * 内容为空，点击屏幕重试
+             */
+            @Override
+            public void onEmptyClick() {
+                //重新获取数据
+                if (mRecommendPresenter != null) {
+                    mRecommendPresenter.getRecommendList();
+                }
+            }
+        });
         return mUILoader;
     }
 
@@ -96,8 +117,8 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     }
 
     @Override
-    public void networkError() {
-        mUILoader.updateStatus(UILoader.UIStatus.NOTWORK_ERROR);
+    public void onNetworkError() {
+        mUILoader.updateStatus(UILoader.UIStatus.NETWORK_ERROR);
     }
 
     @Override
@@ -119,25 +140,5 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         }
     }
 
-    /**
-     * 无网络，点击屏幕重试
-     */
-    @Override
-    public void onNetworkErrorClick() {
-        //重新获取数据
-        if (mRecommendPresenter != null) {
-            mRecommendPresenter.getRecommendList();
-        }
-    }
 
-    /**
-     * 内容为空，点击屏幕重试
-     */
-    @Override
-    public void onEmptyClick() {
-        //重新获取数据
-        if (mRecommendPresenter != null) {
-            mRecommendPresenter.getRecommendList();
-        }
-    }
 }

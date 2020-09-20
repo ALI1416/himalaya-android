@@ -18,7 +18,9 @@ import java.util.List;
 public class DetailAlbumListAdapter extends RecyclerView.Adapter<DetailAlbumListAdapter.InnerHolder> {
 
     private List<Track> mTracks = new ArrayList<>();
-    private SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat mDatetimeFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat mTimeFormat = new SimpleDateFormat("mm:ss");
+    private ItemClickListener mItemClickListener = null;
 
     @NonNull
     @Override
@@ -38,11 +40,19 @@ public class DetailAlbumListAdapter extends RecyclerView.Adapter<DetailAlbumList
         TextView time = view.findViewById(R.id.album_time);
         //设置数据
         Track track = mTracks.get(position);
-        id.setText(String.valueOf(position));
+        id.setText(String.valueOf(position + 1));
         title.setText(track.getTrackTitle());
-        playCount.setText(track.getPlayCount());
-        playDuration.setText(track.getSampleDuration());
-        time.setText(mSimpleDateFormat.format(track.getUpdatedAt()));
+        playCount.setText(track.getPlayCount() + "次");
+        playDuration.setText(mTimeFormat.format(track.getDuration() * 1000));
+        time.setText(mDatetimeFormat.format(track.getUpdatedAt()));
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mItemClickListener != null) {
+                    mItemClickListener.onItemClick();
+                }
+            }
+        });
     }
 
     @Override
@@ -60,5 +70,13 @@ public class DetailAlbumListAdapter extends RecyclerView.Adapter<DetailAlbumList
         public InnerHolder(@NonNull View itemView) {
             super(itemView);
         }
+    }
+
+    public void setItemClickListener(ItemClickListener listener) {
+        mItemClickListener = listener;
+    }
+
+    public interface ItemClickListener {
+        void onItemClick();
     }
 }

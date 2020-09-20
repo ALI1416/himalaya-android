@@ -5,6 +5,7 @@
     android:layout_margin="5dp"
     android:background="@drawable/shape_album_item_bg"
     >
+
     <!--自定义圆角矩形-->
     <com.ck.view.RoundRectImageView
         android:id="@+id/recommend_item_image"
@@ -19,7 +20,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
         android:orientation="vertical"
         >
 
@@ -27,7 +28,8 @@
             android:id="@+id/recommend_item_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="标题标题标题标题标题标题标题标题标题标题标题"
             android:textColor="#000"
             android:textSize="25sp"
@@ -39,7 +41,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-            android:singleLine="true"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="简介简介简介简介简介简介简介简介简介简介简介"
             android:textSize="18sp"
             />
@@ -58,7 +61,6 @@
                     android:layout_width="12dp"
                     android:layout_height="12dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginRight="2dp"
                     android:src="@mipmap/play_info_icon"
                     />
 
@@ -66,6 +68,7 @@
                     android:id="@+id/recommend_item_play_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
                     android:text="播放量"
                     android:textSize="12sp"
                     />
@@ -80,7 +83,6 @@
                     android:layout_width="12dp"
                     android:layout_height="12dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginRight="2dp"
                     android:src="@mipmap/ic_sound"
                     />
 
@@ -88,6 +90,7 @@
                     android:id="@+id/recommend_item_play_episode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
                     android:text="集数"
                     android:textSize="12sp"
                     />

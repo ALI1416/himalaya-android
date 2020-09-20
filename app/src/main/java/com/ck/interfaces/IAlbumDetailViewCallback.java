@@ -18,4 +18,9 @@ public interface IAlbumDetailViewCallback {
      * 加载到了一个的详情
      */
     void onAlbumLoader(Album album);
+
+    /**
+     * 网络异常
+     */
+    void onNetworkError(int i, String s);
 }

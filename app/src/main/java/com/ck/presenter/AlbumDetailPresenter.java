@@ -38,7 +38,7 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
 
     @Override
     public void getAlbumDetail(long albumId, int pages, int rows) {
-        getData2(albumId, pages, rows);
+        getData(albumId, pages, rows);
     }
 
     private void getData(long albumId, int pages, int rows) {
@@ -61,8 +61,18 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
             public void onError(int i, String s) {
                 L.e("errorCode-->" + i);
                 L.e("errorMsg-->" + s);
+                handleError(i, s);
             }
         });
+    }
+
+    /**
+     * 网络错误
+     */
+    private void handleError(int i, String s) {
+        for (IAlbumDetailViewCallback mCallback : mCallbacks) {
+            mCallback.onNetworkError(i,s);
+        }
     }
 
     private void getData2(long albumId, int pages, int rows) {
@@ -118,8 +128,6 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
 
     /**
      * 设置专辑内容
-     *
-     * @param targetAlbum
      */
     public void setTargetAlbum(Album targetAlbum) {
         mTargetAlbum = targetAlbum;

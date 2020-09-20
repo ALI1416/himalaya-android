@@ -30,6 +30,7 @@
         </activity>
         <activity android:name=".base.BaseActivity" />
         <activity android:name=".DetailActivity" />
+        <activity android:name=".PlayerActivity" />
     </application>
 
 </manifest>

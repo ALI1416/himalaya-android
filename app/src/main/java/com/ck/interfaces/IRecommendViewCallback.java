@@ -18,7 +18,7 @@ public interface IRecommendViewCallback {
     /**
      * 网络异常
      */
-    void networkError();
+    void onNetworkError();
 
     /**
      * 数据为空
