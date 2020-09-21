@@ -42,7 +42,7 @@ public class RecommendPresenter implements IRecommendPresenter {
     @Override
     public void getRecommendList() {
         updateLoading();
-        getData();
+        getData2();
     }
 
     /**
@@ -88,7 +88,7 @@ public class RecommendPresenter implements IRecommendPresenter {
             public void onError(int i, String s) {
                 L.e("errorCode-->" + i);
                 L.e("errorMsg-->" + s);
-                handleError();
+                handleError(i, s);
             }
         });
     }
@@ -96,10 +96,10 @@ public class RecommendPresenter implements IRecommendPresenter {
     /**
      * 发生错误
      */
-    private void handleError() {
+    private void handleError(int i, String s) {
         if (mCallbacks != null) {
             for (IRecommendViewCallback callback : mCallbacks) {
-                callback.onNetworkError();
+                callback.onNetworkError(i, s);
             }
         }
     }

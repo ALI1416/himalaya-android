@@ -30,7 +30,7 @@ public class DetailAlbumListAdapter extends RecyclerView.Adapter<DetailAlbumList
     }
 
     @Override
-    public void onBindViewHolder(@NonNull DetailAlbumListAdapter.InnerHolder holder, int position) {
+    public void onBindViewHolder(@NonNull DetailAlbumListAdapter.InnerHolder holder, final int position) {
         //找到控件
         View view = holder.itemView;
         TextView id = view.findViewById(R.id.album_id);
@@ -49,7 +49,7 @@ public class DetailAlbumListAdapter extends RecyclerView.Adapter<DetailAlbumList
             @Override
             public void onClick(View v) {
                 if (mItemClickListener != null) {
-                    mItemClickListener.onItemClick();
+                    mItemClickListener.onItemClick(mTracks, position);
                 }
             }
         });
@@ -77,6 +77,6 @@ public class DetailAlbumListAdapter extends RecyclerView.Adapter<DetailAlbumList
     }
 
     public interface ItemClickListener {
-        void onItemClick();
+        void onItemClick(List<Track> tracks, int position);
     }
 }

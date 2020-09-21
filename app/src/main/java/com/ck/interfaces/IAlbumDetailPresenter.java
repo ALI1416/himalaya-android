@@ -1,6 +1,8 @@
 package com.ck.interfaces;
 
-public interface IAlbumDetailPresenter {
+import com.ck.base.IBasePresenter;
+
+public interface IAlbumDetailPresenter extends IBasePresenter<IAlbumDetailViewCallback> {
     /**
      * 获取专辑详情
      */
@@ -15,14 +17,4 @@ public interface IAlbumDetailPresenter {
      * 上拉加载更多
      */
     void loadMore();
-
-    /**
-     * 注册UI的回调
-     */
-    void registerViewCallback(IAlbumDetailViewCallback callback);
-
-    /**
-     * 注销UI的回调
-     */
-    void unRegisterViewCallback(IAlbumDetailViewCallback callback);
 }

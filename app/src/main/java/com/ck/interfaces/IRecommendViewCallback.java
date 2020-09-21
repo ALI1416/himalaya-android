@@ -10,15 +10,13 @@ import java.util.List;
 public interface IRecommendViewCallback {
     /**
      * 获取到了推荐内容
-     *
-     * @param result
      */
-    void onRecommendListLoaded(List<Album> result);
+    void onRecommendListLoaded(List<Album> albums);
 
     /**
      * 网络异常
      */
-    void onNetworkError();
+    void onNetworkError(int i, String s);
 
     /**
      * 数据为空

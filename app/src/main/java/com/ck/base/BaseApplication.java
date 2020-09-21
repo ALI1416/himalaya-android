@@ -1,14 +1,17 @@
 package com.ck.base;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Handler;
 
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
+import com.ximalaya.ting.android.opensdk.player.XmPlayerManager;
 
 public class BaseApplication extends Application {
 
     private static Handler sHandler = null;
+    private static Context sContext = null;
 
     @Override
     public void onCreate() {
@@ -26,15 +29,22 @@ public class BaseApplication extends Application {
             mXimalaya.setPackid("com.ximalaya.qunfeng");
             mXimalaya.init(this, mAppSecret);
         }
+        XmPlayerManager.getInstance(this).init();//初始化喜马拉雅播放器
         sHandler = new Handler();
+        sContext = getBaseContext();
     }
 
     /**
      * 获得主线程Handler，可以去更新UI
-     *
-     * @return
      */
     public static Handler getHandler() {
         return sHandler;
+    }
+
+    /**
+     * 获取AppContext
+     */
+    public static Context getAppContext() {
+        return sContext;
     }
 }

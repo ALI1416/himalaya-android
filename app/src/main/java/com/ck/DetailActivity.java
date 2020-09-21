@@ -23,6 +23,7 @@ import com.ck.base.BaseActivity;
 import com.ck.constant.RecommendConstant;
 import com.ck.interfaces.IAlbumDetailViewCallback;
 import com.ck.presenter.AlbumDetailPresenter;
+import com.ck.presenter.PlayerPresenter;
 import com.ck.view.UILoader;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
@@ -31,10 +32,10 @@ import java.util.List;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
-
 public class DetailActivity extends BaseActivity implements IAlbumDetailViewCallback {
     private static final String TAG = "DetailActivity";
     private final DetailActivity _this = this;
+    private View mRootView;
 
     private void log(String msg) {
         Log.d(TAG, msg);
@@ -101,8 +102,8 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     }
 
     private View createSuccessView(ViewGroup container) {
-        View view = LayoutInflater.from(this).inflate(R.layout.item_detail_list, container, false);
-        mDetailAlbumRecyclerView = view.findViewById(R.id.detail_album_recycle_view);
+        mRootView = LayoutInflater.from(this).inflate(R.layout.item_detail_list, container, false);
+        mDetailAlbumRecyclerView = mRootView.findViewById(R.id.detail_album_recycle_view);
         //RecyclerView布局管理和适配器
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mDetailAlbumRecyclerView.setLayoutManager(layoutManager);
@@ -110,34 +111,27 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         mDetailAlbumRecyclerView.setAdapter(mDetailAlbumListAdapter);
         mDetailAlbumListAdapter.setItemClickListener(new DetailAlbumListAdapter.ItemClickListener() {
             @Override
-            public void onItemClick() {
+            public void onItemClick(List<Track> tracks, int position) {
+                //设置播放器数据
+                PlayerPresenter playerPresenter = PlayerPresenter.getInstance();
+                playerPresenter.setPlayList(tracks, position);
+                //页面跳转
                 Intent intent = new Intent(_this, PlayerActivity.class);
                 startActivity(intent);
             }
         });
-        return view;
+        return mRootView;
     }
 
     @Override
     public void onDetailListLoaded(List<Track> tracks) {
-        if (tracks != null && tracks.size() != 0) {
-            if (mUiLoader != null) {
-                mUiLoader.updateStatus(UILoader.UIStatus.SUCCESS);//获取到了数据
-            }
-        } else {
-            if (mUiLoader != null) {
-                mUiLoader.updateStatus(UILoader.UIStatus.EMPTY);//数据为空
-            }
-        }
         mDetailAlbumListAdapter.setData(tracks);
+        mUiLoader.updateStatus(UILoader.UIStatus.SUCCESS);
     }
 
     @Override
     public void onAlbumLoader(Album album) {
         mCurrentId = album.getId();
-        if (mUiLoader != null) {
-            mUiLoader.updateStatus(UILoader.UIStatus.LOADING);//准备去获取专辑列表
-        }
         if (mDetailTitle != null) {
             mDetailTitle.setText(album.getAlbumTitle());
         }
@@ -168,4 +162,21 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         mUiLoader.updateStatus(UILoader.UIStatus.NETWORK_ERROR);
     }
 
+    @Override
+    public void onEmpty() {
+        mUiLoader.updateStatus(UILoader.UIStatus.EMPTY);
+    }
+
+    @Override
+    public void onLoading() {
+        mUiLoader.updateStatus(UILoader.UIStatus.LOADING);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mAlbumDetailPresenter != null) {
+            mAlbumDetailPresenter.unRegisterViewCallback(this);
+        }
+    }
 }

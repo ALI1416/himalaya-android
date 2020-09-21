@@ -28,11 +28,11 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     private RecyclerView mRecommendRecyclerView;
     private RecommendListAdapter mRecommendListAdapter;
     private RecommendPresenter mRecommendPresenter;
-    private UILoader mUILoader;
+    private UILoader mUiLoader;
 
     @Override
     protected View onSubViewLoaded(final LayoutInflater layoutInflater, ViewGroup container) {
-        mUILoader = new UILoader(getContext()) {
+        mUiLoader = new UILoader(getContext()) {
             @Override
             protected View getSuccessView(ViewGroup container) {
                 return createSuccessView(layoutInflater, container);
@@ -45,10 +45,10 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         //获取推荐列表
         mRecommendPresenter.getRecommendList();
         //与父类解绑，不能重复绑定View
-        if (mUILoader.getParent() instanceof ViewGroup) {
-            ((ViewGroup) mUILoader.getParent()).removeView(mUILoader);//父类解绑自己
+        if (mUiLoader.getParent() instanceof ViewGroup) {
+            ((ViewGroup) mUiLoader.getParent()).removeView(mUiLoader);//父类解绑自己
         }
-        mUILoader.setOnReload(new UILoader.OnUILoadClickListener() {
+        mUiLoader.setOnReload(new UILoader.OnUILoadClickListener() {
             /**
              * 无网络，点击屏幕重试
              */
@@ -71,7 +71,7 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
                 }
             }
         });
-        return mUILoader;
+        return mUiLoader;
     }
 
     private View createSuccessView(LayoutInflater layoutInflater, ViewGroup container) {
@@ -113,22 +113,22 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     public void onRecommendListLoaded(List<Album> result) {
         //获取到推荐内容时，这个方法就被调用了，去更新UI
         mRecommendListAdapter.setData(result);
-        mUILoader.updateStatus(UILoader.UIStatus.SUCCESS);
+        mUiLoader.updateStatus(UILoader.UIStatus.SUCCESS);
     }
 
     @Override
-    public void onNetworkError() {
-        mUILoader.updateStatus(UILoader.UIStatus.NETWORK_ERROR);
+    public void onNetworkError(int i, String s) {
+        mUiLoader.updateStatus(UILoader.UIStatus.NETWORK_ERROR);
     }
 
     @Override
     public void onEmpty() {
-        mUILoader.updateStatus(UILoader.UIStatus.EMPTY);
+        mUiLoader.updateStatus(UILoader.UIStatus.EMPTY);
     }
 
     @Override
     public void onLoading() {
-        mUILoader.updateStatus(UILoader.UIStatus.LOADING);
+        mUiLoader.updateStatus(UILoader.UIStatus.LOADING);
     }
 
     @Override

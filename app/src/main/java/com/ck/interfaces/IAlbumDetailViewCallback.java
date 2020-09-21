@@ -23,4 +23,14 @@ public interface IAlbumDetailViewCallback {
      * 网络异常
      */
     void onNetworkError(int i, String s);
+
+    /**
+     * 数据为空
+     */
+    void onEmpty();
+
+    /**
+     * 正在加载
+     */
+    void onLoading();
 }

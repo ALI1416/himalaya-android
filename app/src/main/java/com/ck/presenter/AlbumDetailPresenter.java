@@ -38,7 +38,8 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
 
     @Override
     public void getAlbumDetail(long albumId, int pages, int rows) {
-        getData(albumId, pages, rows);
+        updateLoading();
+        getData2(albumId, pages, rows);
     }
 
     private void getData(long albumId, int pages, int rows) {
@@ -66,30 +67,48 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
         });
     }
 
+    private void getData2(long albumId, int pages, int rows) {
+        List<Track> trackList = new ArrayList<>();
+        for (int i = 0; i < rows; i++) {
+            Track track = new Track();
+            track.setTrackTitle(i + "标题标题标题标题标题标题标题标题标题标题标题标题");
+            track.setPlayCount(i);
+            track.setDuration(100 * i);
+            track.setUpdatedAt(1000000000L * i);
+            trackList.add(track);
+        }
+        handleAlbumDetailResult(trackList);
+    }
+
     /**
      * 网络错误
      */
     private void handleError(int i, String s) {
-        for (IAlbumDetailViewCallback mCallback : mCallbacks) {
-            mCallback.onNetworkError(i,s);
+        for (IAlbumDetailViewCallback callback : mCallbacks) {
+            callback.onNetworkError(i, s);
         }
     }
 
-    private void getData2(long albumId, int pages, int rows) {
-        List<Track> tracks = new ArrayList<>();
-        for (int i = 0; i < rows; i++) {
-            Track track = new Track();
-            tracks.add(track);
+    private void updateLoading() {
+        for (IAlbumDetailViewCallback callback : mCallbacks) {
+            callback.onLoading();
         }
-        handleAlbumDetailResult(tracks);
     }
 
     /**
      * 更新专辑列表详情
      */
-    private void handleAlbumDetailResult(List<Track> tracks) {
-        for (IAlbumDetailViewCallback mCallback : mCallbacks) {
-            mCallback.onDetailListLoaded(tracks);
+    private void handleAlbumDetailResult(List<Track> trackList) {
+        if (trackList != null) {
+            if (trackList.size() == 0) {
+                for (IAlbumDetailViewCallback callback : mCallbacks) {
+                    callback.onEmpty();
+                }
+            } else {
+                for (IAlbumDetailViewCallback callback : mCallbacks) {
+                    callback.onDetailListLoaded(trackList);
+                }
+            }
         }
     }
 
