@@ -31,6 +31,7 @@
         <activity android:name=".base.BaseActivity" />
         <activity android:name=".DetailActivity" />
         <activity android:name=".PlayerActivity" />
+
         <service
             android:name="com.ximalaya.ting.android.opensdk.player.service.XmPlayerService"
             android:process=":player" />

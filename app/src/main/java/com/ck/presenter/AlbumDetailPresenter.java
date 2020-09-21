@@ -39,7 +39,7 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
     @Override
     public void getAlbumDetail(long albumId, int pages, int rows) {
         updateLoading();
-        getData2(albumId, pages, rows);
+        getData(albumId, pages, rows);
     }
 
     private void getData(long albumId, int pages, int rows) {
