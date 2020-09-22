@@ -6,6 +6,7 @@
     >
 
     <TextView
+        android:id="@+id/player_title"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginLeft="10dp"
@@ -18,72 +19,92 @@
         />
 
     <androidx.viewpager.widget.ViewPager
+        android:id="@+id/player_view_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@color/colorPrimary"
         />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         >
 
         <TextView
+            android:id="@+id/play_seek_now"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="5dp"
             android:text="00:00"
             />
 
         <SeekBar
+            android:id="@+id/play_seek_bar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
             />
 
         <TextView
+            android:id="@+id/player_seek_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="10dp"
             android:text="20:00"
             />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         >
 
         <ImageView
+            android:id="@+id/player_mode"
             android:layout_width="0dp"
-            android:layout_height="20dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:src="@mipmap/sort_descending_normal"
             />
 
         <ImageView
+            android:id="@+id/player_pre"
             android:layout_width="0dp"
             android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:src="@mipmap/previous_normal"
             />
 
         <ImageView
+            android:id="@+id/player_play"
             android:layout_width="0dp"
-            android:layout_height="20dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:src="@mipmap/play_normal"
             />
 
         <ImageView
+            android:id="@+id/player_next"
             android:layout_width="0dp"
             android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:src="@mipmap/next_normal"
             />
 
         <ImageView
+            android:id="@+id/player_list"
             android:layout_width="0dp"
-            android:layout_height="20dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:src="@mipmap/player_icon_list_normal"
             />

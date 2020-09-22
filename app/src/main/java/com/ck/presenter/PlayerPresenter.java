@@ -4,18 +4,29 @@ import com.ck.base.BaseApplication;
 import com.ck.interfaces.IPlayerCallback;
 import com.ck.interfaces.IPlayerPresenter;
 import com.ck.util.L;
+import com.ximalaya.ting.android.opensdk.model.PlayableModel;
+import com.ximalaya.ting.android.opensdk.model.advertis.Advertis;
+import com.ximalaya.ting.android.opensdk.model.advertis.AdvertisList;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.XmPlayerManager;
+import com.ximalaya.ting.android.opensdk.player.advertis.IXmAdsStatusListener;
+import com.ximalaya.ting.android.opensdk.player.service.IXmPlayerStatusListener;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
+import com.ximalaya.ting.android.opensdk.player.service.XmPlayerException;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerPresenter implements IPlayerPresenter {
+public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, IXmPlayerStatusListener {
+
+    private List<IPlayerCallback> mCallbacks = new ArrayList<>();
 
     private final XmPlayerManager mPlayerManger;
 
     private PlayerPresenter() {
         mPlayerManger = XmPlayerManager.getInstance(BaseApplication.getAppContext());
+        mPlayerManger.addAdsStatusListener(this);
+        mPlayerManger.addPlayerStatusListener(this);
     }
 
     private static PlayerPresenter sInstance = null;
@@ -51,12 +62,16 @@ public class PlayerPresenter implements IPlayerPresenter {
 
     @Override
     public void pause() {
-
+        if (isPlayerListLoaded) {
+            mPlayerManger.pause();
+        }
     }
 
     @Override
     public void stop() {
-
+        if (isPlayerListLoaded) {
+            mPlayerManger.stop();
+        }
     }
 
     @Override
@@ -90,12 +105,124 @@ public class PlayerPresenter implements IPlayerPresenter {
     }
 
     @Override
-    public void registerViewCallback(IPlayerCallback iPlayerCallback) {
+    public boolean isPlay() {
+        return mPlayerManger.isPlaying();
+    }
 
+    @Override
+    public void registerViewCallback(IPlayerCallback iPlayerCallback) {
+        if (!mCallbacks.contains(iPlayerCallback)) {
+            mCallbacks.add(iPlayerCallback);
+        }
     }
 
     @Override
     public void unRegisterViewCallback(IPlayerCallback iPlayerCallback) {
+        mCallbacks.remove(iPlayerCallback);
+    }
+
+    //==============广告回调开始==============
+
+    @Override
+    public void onStartGetAdsInfo() {
 
     }
+
+    @Override
+    public void onGetAdsInfo(AdvertisList advertisList) {
+
+    }
+
+    @Override
+    public void onAdsStartBuffering() {
+
+    }
+
+    @Override
+    public void onAdsStopBuffering() {
+
+    }
+
+    @Override
+    public void onStartPlayAds(Advertis advertis, int i) {
+
+    }
+
+    @Override
+    public void onCompletePlayAds() {
+
+    }
+
+    @Override
+    public void onError(int i, int i1) {
+
+    }
+
+    //==============广告回调结束==============
+
+    //==============播放器回调开始==============
+
+    @Override
+    public void onPlayStart() {
+        for (IPlayerCallback callback : mCallbacks) {
+            callback.onPlayerStart();
+        }
+    }
+
+    @Override
+    public void onPlayPause() {
+        for (IPlayerCallback callback : mCallbacks) {
+            callback.onPlayStop();
+        }
+    }
+
+    @Override
+    public void onPlayStop() {
+        for (IPlayerCallback callback : mCallbacks) {
+            callback.onPlayStop();
+        }
+    }
+
+    @Override
+    public void onSoundPlayComplete() {
+
+    }
+
+    @Override
+    public void onSoundPrepared() {
+
+    }
+
+    @Override
+    public void onSoundSwitch(PlayableModel playableModel, PlayableModel playableModel1) {
+
+    }
+
+    @Override
+    public void onBufferingStart() {
+
+    }
+
+    @Override
+    public void onBufferingStop() {
+
+    }
+
+    @Override
+    public void onBufferProgress(int i) {
+
+    }
+
+    @Override
+    public void onPlayProgress(int i, int i1) {
+
+    }
+
+    @Override
+    public boolean onError(XmPlayerException e) {
+        return false;
+    }
+
+    //==============播放器回调结束==============
+
 }

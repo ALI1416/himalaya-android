@@ -4,7 +4,6 @@ android {
     compileSdkVersion 29
     buildToolsVersion '29.0.2'
 
-
     defaultConfig {
         applicationId "com.ck"
         minSdkVersion 21
@@ -34,9 +33,11 @@ android {
         }
     }
 }
+
 repositories {
     jcenter()
 }
+
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
