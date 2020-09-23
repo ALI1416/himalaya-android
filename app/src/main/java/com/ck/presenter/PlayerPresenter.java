@@ -46,8 +46,10 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         return sInstance;
     }
 
+    /**
+     * 设置播放列表
+     */
     public void setPlayList(List<Track> list, int playIndex) {
-        L.d(list.get(playIndex).toString());
         if (mPlayerManger != null) {
             isPlayerListLoaded = true;
             mPlayerManger.setPlayList(list, playIndex);
@@ -58,6 +60,9 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         }
     }
 
+    /**
+     * 播放
+     */
     @Override
     public void play() {
         if (isPlayerListLoaded) {
@@ -65,6 +70,9 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         }
     }
 
+    /**
+     * 暂停
+     */
     @Override
     public void pause() {
         if (isPlayerListLoaded) {
@@ -72,6 +80,9 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         }
     }
 
+    /**
+     * 停止
+     */
     @Override
     public void stop() {
         if (isPlayerListLoaded) {
@@ -79,6 +90,9 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         }
     }
 
+    /**
+     * 播放上一首
+     */
     @Override
     public void playPre() {
         if (mPlayerManger != null) {
@@ -86,6 +100,9 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         }
     }
 
+    /**
+     * 播放下一首
+     */
     @Override
     public void playNext() {
         if (mPlayerManger != null) {
@@ -93,11 +110,22 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         }
     }
 
+    /**
+     * 切换播放模式
+     */
     @Override
     public void switchPlayMode(XmPlayListControl.PlayMode mode) {
-
+        if (mPlayerManger != null) {
+            mPlayerManger.setPlayMode(mode);
+            for (IPlayerCallback callback : mCallbacks) {//通知UI更新
+                callback.onPlayModeChange(mode);
+            }
+        }
     }
 
+    /**
+     * 获取播放列表
+     */
     @Override
     public void getPlayList() {
         if (mPlayerManger != null) {
@@ -109,7 +137,7 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     }
 
     /**
-     * 切换播放
+     * 切歌
      */
     @Override
     public void playByIndex(int index) {
@@ -126,6 +154,9 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         mPlayerManger.seekTo(progress);
     }
 
+    /**
+     * 判断是否正在播放
+     */
     @Override
     public boolean isPlay() {
         return mPlayerManger.isPlaying();

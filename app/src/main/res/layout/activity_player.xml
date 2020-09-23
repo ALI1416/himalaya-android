@@ -70,7 +70,7 @@
             android:layout_height="25dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:src="@mipmap/sort_descending_normal"
+            android:src="@drawable/selector_player_mode_list"
             />
 
         <ImageView
@@ -106,7 +106,7 @@
             android:layout_height="25dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:src="@mipmap/player_icon_list_normal"
+            android:src="@mipmap/sort_descending_normal"
             />
     </LinearLayout>
 </LinearLayout>

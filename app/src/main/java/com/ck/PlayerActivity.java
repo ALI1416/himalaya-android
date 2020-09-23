@@ -18,11 +18,19 @@ import com.ck.adapter.PlayerViewPagerAdapter;
 import com.ck.base.BaseActivity;
 import com.ck.interfaces.IPlayerCallback;
 import com.ck.presenter.PlayerPresenter;
+import com.ck.util.L;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST;
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST_LOOP;
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_RANDOM;
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_SINGLE_LOOP;
 
 public class PlayerActivity extends BaseActivity implements IPlayerCallback {
 
@@ -39,11 +47,25 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
     private PlayerPresenter mPlayerPresenter;
     private SimpleDateFormat mMmssFormat = new SimpleDateFormat("mm:ss");
     private SimpleDateFormat mHhmmssFormat = new SimpleDateFormat("hh:mm:ss");
+    private String mTitleText;
+    private PlayerViewPagerAdapter mPlayerViewPagerAdapter;
     private int mCurrentProgress = 0;//当前播放进度
     private boolean mIsUserTouchSeekBar = false;//是否用户触摸进度条
     private boolean mIsUserSlidPager = false;//是否用户滑动图片
-    private String mTitleText;
-    private PlayerViewPagerAdapter mPlayerViewPagerAdapter;
+    private static Map<XmPlayListControl.PlayMode, XmPlayListControl.PlayMode> sPlayMode = new HashMap<>();//寻找下一个播放模式
+    private XmPlayListControl.PlayMode mCurrentPlayMode = PLAY_MODEL_LIST;//当前播放模式
+
+    static {
+        //PLAY_MODEL_SINGLE 单曲
+        //PLAY_MODEL_SINGLE_LOOP 单曲循环
+        //PLAY_MODEL_LIST 列表
+        //PLAY_MODEL_LIST_LOOP 列表循环
+        //PLAY_MODEL_RANDOM 随机
+        sPlayMode.put(PLAY_MODEL_LIST_LOOP, PLAY_MODEL_RANDOM);
+        sPlayMode.put(PLAY_MODEL_RANDOM, PLAY_MODEL_SINGLE_LOOP);
+        sPlayMode.put(PLAY_MODEL_SINGLE_LOOP, PLAY_MODEL_LIST);
+        sPlayMode.put(PLAY_MODEL_LIST, PLAY_MODEL_LIST_LOOP);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,7 +95,6 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
         //设置适配器
         mPlayerViewPagerAdapter = new PlayerViewPagerAdapter();
         mViewPager.setAdapter(mPlayerViewPagerAdapter);
-
     }
 
     //region initEven.start
@@ -128,7 +149,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
                 }
             }
         });
-        //图片切换
+        //切换图片更换歌曲
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -148,6 +169,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
 
             }
         });
+        //点击按钮切换歌曲时，防止调用上面方法
         mViewPager.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -164,8 +186,45 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
                 return false;
             }
         });
+        //播放模式切换
+        mMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                XmPlayListControl.PlayMode playMode = sPlayMode.get(mCurrentPlayMode);//获取下一个播放模式
+                if (mPlayerPresenter != null) {
+                    mPlayerPresenter.switchPlayMode(playMode);//切换播放模式
+                }
+            }
+        });
     }
+
     //endregion initEven.end
+
+    /**
+     * 更新播放模式图标
+     */
+    private void updatePlayModeImg() {
+        int resId = R.drawable.selector_player_mode_list;
+        switch (mCurrentPlayMode) {
+            case PLAY_MODEL_LIST: {
+                resId = R.drawable.selector_player_mode_list;
+                break;
+            }
+            case PLAY_MODEL_LIST_LOOP: {
+                resId = R.drawable.selector_player_mode_list_loop;
+                break;
+            }
+            case PLAY_MODEL_RANDOM: {
+                resId = R.drawable.selector_player_mode_random;
+                break;
+            }
+            case PLAY_MODEL_SINGLE_LOOP: {
+                resId = R.drawable.selector_player_mode_single_loop;
+                break;
+            }
+        }
+        mMode.setImageResource(resId);
+    }
 
     @Override
     protected void onDestroy() {
@@ -201,7 +260,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
     @Override
     public void onPlayStop() {
         if (mPlay != null) {
-            mPlay.setImageResource(R.drawable.selector_player_stop);
+            mPlay.setImageResource(R.drawable.selector_player_play);
         }
     }
 
@@ -230,7 +289,8 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
 
     @Override
     public void onPlayModeChange(XmPlayListControl.PlayMode mode) {
-
+        mCurrentPlayMode = mode;
+        updatePlayModeImg();
     }
 
     @Override
@@ -238,7 +298,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
         mSeekBar.setMax(total);
         //更新进度条时间
         String totalDuration;
-        if (total > 1000 * 60 * 60) {
+        if (total < 1000 * 60 * 60) {
             totalDuration = mMmssFormat.format(total);
         } else {
             totalDuration = mHhmmssFormat.format(total);
@@ -247,7 +307,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
             mSeekTotal.setText(totalDuration);
         }
         String currentPosition;
-        if (currentProgress > 1000 * 60 * 60) {
+        if (currentProgress < 1000 * 60 * 60) {
             currentPosition = mMmssFormat.format(currentProgress);
         } else {
             currentPosition = mHhmmssFormat.format(currentProgress);
