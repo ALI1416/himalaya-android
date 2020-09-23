@@ -79,7 +79,7 @@
             android:layout_height="20dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:src="@mipmap/previous_normal"
+            android:src="@drawable/selector_player_pre"
             />
 
         <ImageView
@@ -88,7 +88,7 @@
             android:layout_height="35dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:src="@mipmap/play_normal"
+            android:src="@drawable/selector_player_play"
             />
 
         <ImageView
@@ -97,7 +97,7 @@
             android:layout_height="20dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:src="@mipmap/next_normal"
+            android:src="@drawable/selector_player_next"
             />
 
         <ImageView

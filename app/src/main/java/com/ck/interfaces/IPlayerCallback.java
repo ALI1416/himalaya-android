@@ -50,7 +50,7 @@ public interface IPlayerCallback {
     /**
      * 进度条改变
      */
-    void onProgressChange(long currentProgress, long total);
+    void onProgressChange(int currentProgress, int total);
 
     /**
      * 公告正在加载
@@ -61,5 +61,10 @@ public interface IPlayerCallback {
      * 公告结束
      */
     void onAdFinished();
+
+    /**
+     * track更新
+     */
+    void onTrackUpdate(Track track, int index);
 
 }
