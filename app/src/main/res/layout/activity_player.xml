@@ -106,7 +106,7 @@
             android:layout_height="25dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:src="@mipmap/sort_descending_normal"
+            android:src="@drawable/selector_player_list"
             />
     </LinearLayout>
 </LinearLayout>

@@ -1,5 +1,8 @@
 package com.ck.presenter;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.ck.base.BaseApplication;
 import com.ck.interfaces.IPlayerCallback;
 import com.ck.interfaces.IPlayerPresenter;
@@ -20,16 +23,24 @@ import java.util.List;
 
 public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, IXmPlayerStatusListener {
 
+    private static final String PLAY_MODE_SP_NAME = "PlayMode";
+    private static final String PLAY_MODE_SP_KEY = "currentPlayMode";
+
     private List<IPlayerCallback> mCallbacks = new ArrayList<>();
 
     private final XmPlayerManager mPlayerManger;
     private Track mCurrentTrack;
     private int mCurrentIndex;
+    private final SharedPreferences mPlayMode;
+    private XmPlayListControl.PlayMode mCurrentPlayMode = XmPlayListControl.PlayMode.PLAY_MODEL_LIST;
+    private XmPlayListControl.PlayMode mDefaultPlayMode = XmPlayListControl.PlayMode.PLAY_MODEL_LIST;
 
     private PlayerPresenter() {
         mPlayerManger = XmPlayerManager.getInstance(BaseApplication.getAppContext());
         mPlayerManger.addAdsStatusListener(this);
         mPlayerManger.addPlayerStatusListener(this);
+        //记录播放模式
+        mPlayMode = BaseApplication.getAppContext().getSharedPreferences(PLAY_MODE_SP_NAME, Context.MODE_PRIVATE);
     }
 
     private static PlayerPresenter sInstance = null;
@@ -115,6 +126,7 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
      */
     @Override
     public void switchPlayMode(XmPlayListControl.PlayMode mode) {
+        mCurrentPlayMode = mode;
         if (mPlayerManger != null) {
             mPlayerManger.setPlayMode(mode);
             for (IPlayerCallback callback : mCallbacks) {//通知UI更新
@@ -164,6 +176,9 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 
     @Override
     public void registerViewCallback(IPlayerCallback iPlayerCallback) {
+        int mode = mPlayMode.getInt(PLAY_MODE_SP_KEY, mDefaultPlayMode.ordinal());//获取储存的播放模式
+        mCurrentPlayMode = XmPlayListControl.PlayMode.values()[mode];//values()[]把int类型转为枚举类型
+        iPlayerCallback.onPlayModeChange(mCurrentPlayMode);//切换播放模式
         iPlayerCallback.onTrackUpdate(mCurrentTrack, mCurrentIndex);
         if (!mCallbacks.contains(iPlayerCallback)) {
             mCallbacks.add(iPlayerCallback);
@@ -172,6 +187,9 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 
     @Override
     public void unRegisterViewCallback(IPlayerCallback iPlayerCallback) {
+        SharedPreferences.Editor edit = mPlayMode.edit();
+        edit.putInt(PLAY_MODE_SP_KEY, mCurrentPlayMode.ordinal());//ordinal()把枚举类型转为int类型
+        edit.apply();//写入播放模式状态
         mCallbacks.remove(iPlayerCallback);
     }
 

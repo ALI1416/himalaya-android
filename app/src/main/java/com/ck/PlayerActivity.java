@@ -3,22 +3,21 @@ package com.ck;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.ck.adapter.PlayerViewPagerAdapter;
 import com.ck.base.BaseActivity;
 import com.ck.interfaces.IPlayerCallback;
 import com.ck.presenter.PlayerPresenter;
-import com.ck.util.L;
+import com.ck.view.PlayerListPopupWindow;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
@@ -27,10 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST;
-import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST_LOOP;
-import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_RANDOM;
-import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_SINGLE_LOOP;
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.*;
 
 public class PlayerActivity extends BaseActivity implements IPlayerCallback {
 
@@ -67,6 +63,8 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
         sPlayMode.put(PLAY_MODEL_LIST, PLAY_MODEL_LIST_LOOP);
     }
 
+    private PlayerListPopupWindow mPlayerListPopupWindow;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,9 +93,10 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
         //设置适配器
         mPlayerViewPagerAdapter = new PlayerViewPagerAdapter();
         mViewPager.setAdapter(mPlayerViewPagerAdapter);
+        //弹出
+        mPlayerListPopupWindow = new PlayerListPopupWindow();
     }
 
-    //region initEven.start
     @SuppressLint("ClickableViewAccessibility")
     private void initEven() {
         //播放按钮
@@ -196,9 +195,14 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
                 }
             }
         });
+        //显示播放列表
+        mList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPlayerListPopupWindow.showAsDropDown(v, Gravity.BOTTOM, 0, 0);//在下方弹出
+            }
+        });
     }
-
-    //endregion initEven.end
 
     /**
      * 更新播放模式图标
