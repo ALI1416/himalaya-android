@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--位置从y轴100%的地方（底部）到0%的地方（头部）用时300毫秒-->
+    <translate
+        android:duration="300"
+        android:fromYDelta="100%"
+        android:toYDelta="0" />
+    <!--透明度从0.8到1.0用时300毫秒-->
+    <alpha
+        android:duration="300"
+        android:fromAlpha="0.8"
+        android:toAlpha="1.0" />
+</set>

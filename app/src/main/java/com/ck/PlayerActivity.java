@@ -1,11 +1,16 @@
 package com.ck;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -19,6 +24,7 @@ import com.ck.base.BaseActivity;
 import com.ck.interfaces.IPlayerCallback;
 import com.ck.presenter.PlayerPresenter;
 import com.ck.util.L;
+import com.ck.view.PlayerListPopupWindow;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
@@ -54,6 +60,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
     private boolean mIsUserSlidPager = false;//是否用户滑动图片
     private static Map<XmPlayListControl.PlayMode, XmPlayListControl.PlayMode> sPlayMode = new HashMap<>();//寻找下一个播放模式
     private XmPlayListControl.PlayMode mCurrentPlayMode = PLAY_MODEL_LIST;//当前播放模式
+    private PlayerListPopupWindow mPlayerListPopupWindow;
 
     static {
         //PLAY_MODEL_SINGLE 单曲
@@ -67,6 +74,9 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
         sPlayMode.put(PLAY_MODEL_LIST, PLAY_MODEL_LIST_LOOP);
     }
 
+    private ValueAnimator mEnterBgAnimator;
+    private ValueAnimator mExitBgAnimator;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +86,28 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
         initView();
         mPlayerPresenter.getPlayList();
         initEven();
+        initBgAnim();
+    }
+
+    private void initBgAnim() {
+        //进入背景渐变
+        mEnterBgAnimator = ValueAnimator.ofFloat(1.0f, 0.8f);
+        mEnterBgAnimator.setDuration(300);
+        mEnterBgAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                updateBgAlpha((float) animation.getAnimatedValue());
+            }
+        });
+        //退出背景渐变
+        mExitBgAnimator = ValueAnimator.ofFloat(0.8f, 1.0f);
+        mExitBgAnimator.setDuration(300);
+        mExitBgAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                updateBgAlpha((float) animation.getAnimatedValue());
+            }
+        });
     }
 
     private void initView() {
@@ -95,6 +127,8 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
         //设置适配器
         mPlayerViewPagerAdapter = new PlayerViewPagerAdapter();
         mViewPager.setAdapter(mPlayerViewPagerAdapter);
+        //弹出
+        mPlayerListPopupWindow = new PlayerListPopupWindow();
     }
 
     //region initEven.start
@@ -196,9 +230,34 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
                 }
             }
         });
+        //查看播放列表
+        mList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPlayerListPopupWindow.showAtLocation(v, Gravity.BOTTOM, 0, 0);//在下方弹出
+                mEnterBgAnimator.start();//背景渐变
+            }
+        });
+        //关闭播放列表（弹窗消失后）
+        mPlayerListPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                mExitBgAnimator.start();
+            }
+        });
     }
 
     //endregion initEven.end
+
+    /**
+     * 修改背景透明度
+     */
+    public void updateBgAlpha(float alpha) {
+        Window window = getWindow();
+        WindowManager.LayoutParams attributes = window.getAttributes();
+        attributes.alpha = alpha;
+        window.setAttributes(attributes);
+    }
 
     /**
      * 更新播放模式图标

@@ -1,5 +1,8 @@
 package com.ck.presenter;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.ck.base.BaseApplication;
 import com.ck.interfaces.IPlayerCallback;
 import com.ck.interfaces.IPlayerPresenter;
@@ -25,11 +28,15 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     private final XmPlayerManager mPlayerManger;
     private Track mCurrentTrack;
     private int mCurrentIndex;
+    private final SharedPreferences mPlayMode;
+    public static final String PLAY_MODE_SP_NAME = "play_mode";
+    public static final String PLAY_MODE_SP_KEY = "currentPlayMode";
 
     private PlayerPresenter() {
         mPlayerManger = XmPlayerManager.getInstance(BaseApplication.getAppContext());
         mPlayerManger.addAdsStatusListener(this);
         mPlayerManger.addPlayerStatusListener(this);
+        mPlayMode = BaseApplication.getAppContext().getSharedPreferences(PLAY_MODE_SP_NAME, Context.MODE_PRIVATE);
     }
 
     private static PlayerPresenter sInstance = null;
@@ -121,6 +128,10 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
                 callback.onPlayModeChange(mode);
             }
         }
+        //todo:
+        SharedPreferences.Editor editor = mPlayMode.edit();
+        editor.putInt(PLAY_MODE_SP_KEY, mode.ordinal());
+        editor.apply();
     }
 
     /**
@@ -165,6 +176,12 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     @Override
     public void registerViewCallback(IPlayerCallback iPlayerCallback) {
         iPlayerCallback.onTrackUpdate(mCurrentTrack, mCurrentIndex);
+        if (mPlayMode != null) {
+            //todo:
+//            int mode = mPlayMode.getInt(PLAY_MODE_SP_KEY, XmPlayListControl.PlayMode.PLAY_MODEL_LIST.ordinal());
+//            iPlayerCallback.onPlayModeChange(XmPlayListControl.PlayMode.values()[mode]);
+//            L.d(mode+"  "+XmPlayListControl.PlayMode.values()[mode].toString());
+        }
         if (!mCallbacks.contains(iPlayerCallback)) {
             mCallbacks.add(iPlayerCallback);
         }
