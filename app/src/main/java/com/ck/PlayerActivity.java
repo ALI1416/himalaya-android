@@ -14,16 +14,13 @@ import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.ck.adapter.PlayerViewPagerAdapter;
 import com.ck.base.BaseActivity;
 import com.ck.interfaces.IPlayerCallback;
 import com.ck.presenter.PlayerPresenter;
-import com.ck.util.L;
 import com.ck.view.PlayerListPopupWindow;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
@@ -224,10 +221,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
         mMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                XmPlayListControl.PlayMode playMode = sPlayMode.get(mCurrentPlayMode);//获取下一个播放模式
-                if (mPlayerPresenter != null) {
-                    mPlayerPresenter.switchPlayMode(playMode);//切换播放模式
-                }
+                switchPlayMode();
             }
         });
         //查看播放列表
@@ -245,9 +239,43 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
                 mExitBgAnimator.start();
             }
         });
+        //播放选择的歌曲
+        mPlayerListPopupWindow.setPlayListItemClickListener(new PlayerListPopupWindow.PlayListItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                if (mPlayerPresenter != null) {
+                    mPlayerPresenter.playByIndex(position);
+                }
+            }
+        });
+        //点击播放模式/顺序
+        mPlayerListPopupWindow.setPlayListActionListener(new PlayerListPopupWindow.PlayListActionListener() {
+            @Override
+            public void onPlayModeClick() {
+                switchPlayMode();
+            }
+
+            @Override
+            public void onPlayOrderClick() {
+                if (mPlayerPresenter != null) {
+                    mPlayerPresenter.reversePlayList();//反转播放列表
+                }
+            }
+        });
     }
 
+
     //endregion initEven.end
+
+    /**
+     * 切换播放模式
+     */
+    private void switchPlayMode() {
+        XmPlayListControl.PlayMode playMode = sPlayMode.get(mCurrentPlayMode);//获取下一个播放模式
+        if (mPlayerPresenter != null) {
+            mPlayerPresenter.switchPlayMode(playMode);//切换播放模式
+        }
+    }
 
     /**
      * 修改背景透明度
@@ -343,13 +371,22 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
         if (mPlayerViewPagerAdapter != null) {
             mPlayerViewPagerAdapter.setData(list);
         }
+        if (mPlayerListPopupWindow != null) {
+            mPlayerListPopupWindow.setListData(list);
+        }
 
     }
 
     @Override
     public void onPlayModeChange(XmPlayListControl.PlayMode mode) {
         mCurrentPlayMode = mode;
+        mPlayerListPopupWindow.updatePlayMode(mCurrentPlayMode);
         updatePlayModeImg();
+    }
+
+    @Override
+    public void onPlayOrderChange(boolean isOrder) {
+        mPlayerListPopupWindow.updatePlayOrder(isOrder);
     }
 
     @Override
@@ -396,8 +433,11 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
         if (mTitle != null) {//改变标题
             mTitle.setText(mTitleText);
         }
-        if (mViewPager != null) {
+        if (mViewPager != null) {//改变图片
             mViewPager.setCurrentItem(index);
+        }
+        if (mPlayerListPopupWindow != null) {//设置当前播放
+            mPlayerListPopupWindow.setCurrentPlayPosition(index);
         }
     }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!--有状态的一定要放前面，没有状态的放后面，否则无效-->
-    <item android:drawable="@mipmap/player_icon_list_press" android:state_pressed="true" />
-    <item android:drawable="@mipmap/player_icon_list_normal" />
+    <item android:drawable="@mipmap/sort_ascending_press" android:state_pressed="true" />
+    <item android:drawable="@mipmap/sort_ascending" />
 </selector>

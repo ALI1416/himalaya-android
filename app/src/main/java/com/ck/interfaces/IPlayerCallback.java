@@ -48,6 +48,11 @@ public interface IPlayerCallback {
     void onPlayModeChange(XmPlayListControl.PlayMode mode);
 
     /**
+     * 播放顺序改变
+     */
+    void onPlayOrderChange(boolean isOrder);
+
+    /**
      * 进度条改变
      */
     void onProgressChange(int currentProgress, int total);
@@ -66,5 +71,6 @@ public interface IPlayerCallback {
      * track更新
      */
     void onTrackUpdate(Track track, int index);
+
 
 }

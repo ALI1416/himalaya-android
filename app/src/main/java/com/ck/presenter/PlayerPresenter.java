@@ -19,6 +19,8 @@ import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayerException;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, IXmPlayerStatusListener {
@@ -31,6 +33,7 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     private final SharedPreferences mPlayMode;
     public static final String PLAY_MODE_SP_NAME = "play_mode";
     public static final String PLAY_MODE_SP_KEY = "currentPlayMode";
+    private static boolean isOrder = true;
 
     private PlayerPresenter() {
         mPlayerManger = XmPlayerManager.getInstance(BaseApplication.getAppContext());
@@ -173,14 +176,33 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         return mPlayerManger.isPlaying();
     }
 
+    /**
+     * 反转播放列表
+     */
+    @Override
+    public void reversePlayList() {
+        List<Track> tracks = mPlayerManger.getPlayList();
+        Collections.reverse(tracks);//反转
+        isOrder = !isOrder;
+        mCurrentIndex = tracks.size() - mCurrentIndex - 1;//反转后当前播放节目的下边
+        mPlayerManger.setPlayList(tracks, mCurrentIndex);//重新设置播放列表
+        //更新UI
+        mCurrentTrack = (Track) mPlayerManger.getCurrSound();
+        for (IPlayerCallback callback : mCallbacks) {
+            callback.onListLoaded(tracks);
+            callback.onTrackUpdate(mCurrentTrack, mCurrentIndex);
+            callback.onPlayOrderChange(isOrder);
+        }
+    }
+
     @Override
     public void registerViewCallback(IPlayerCallback iPlayerCallback) {
         iPlayerCallback.onTrackUpdate(mCurrentTrack, mCurrentIndex);
         if (mPlayMode != null) {
             //todo:
-//            int mode = mPlayMode.getInt(PLAY_MODE_SP_KEY, XmPlayListControl.PlayMode.PLAY_MODEL_LIST.ordinal());
-//            iPlayerCallback.onPlayModeChange(XmPlayListControl.PlayMode.values()[mode]);
-//            L.d(mode+"  "+XmPlayListControl.PlayMode.values()[mode].toString());
+            //            int mode = mPlayMode.getInt(PLAY_MODE_SP_KEY, XmPlayListControl.PlayMode.PLAY_MODEL_LIST.ordinal());
+            //            iPlayerCallback.onPlayModeChange(XmPlayListControl.PlayMode.values()[mode]);
+            //            L.d(mode+"  "+XmPlayListControl.PlayMode.values()[mode].toString());
         }
         if (!mCallbacks.contains(iPlayerCallback)) {
             mCallbacks.add(iPlayerCallback);
