@@ -19,7 +19,6 @@ import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayerException;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,18 +27,22 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     private List<IPlayerCallback> mCallbacks = new ArrayList<>();
 
     private final XmPlayerManager mPlayerManger;
-    private Track mCurrentTrack;
-    private int mCurrentIndex;
-    private final SharedPreferences mPlayMode;
-    public static final String PLAY_MODE_SP_NAME = "play_mode";
-    public static final String PLAY_MODE_SP_KEY = "currentPlayMode";
-    private static boolean isOrder = true;
+    private Track mCurrentTrack;//当前播放节目
+    private int mCurrentIndex;//当前播放节目下标
+    private final SharedPreferences mPlayerSp;
+    private static final String PLAYER_SP_NAME = "player_sp";
+    private static final String PLAY_MODE_SP_KEY = "currentPlayMode";
+    private static final String PLAY_ORDER_SP_KEY = "currentPlayOrder";
+    private final XmPlayListControl.PlayMode mPlayModeDefault = XmPlayListControl.PlayMode.PLAY_MODEL_LIST;
+    private XmPlayListControl.PlayMode mPlayModeCurrent = XmPlayListControl.PlayMode.PLAY_MODEL_LIST;
+    private final boolean mPlayOrderDefault = false;
+    private boolean mPlayOrderCurrent = false;
 
     private PlayerPresenter() {
         mPlayerManger = XmPlayerManager.getInstance(BaseApplication.getAppContext());
         mPlayerManger.addAdsStatusListener(this);
         mPlayerManger.addPlayerStatusListener(this);
-        mPlayMode = BaseApplication.getAppContext().getSharedPreferences(PLAY_MODE_SP_NAME, Context.MODE_PRIVATE);
+        mPlayerSp = BaseApplication.getAppContext().getSharedPreferences(PLAYER_SP_NAME, Context.MODE_PRIVATE);
     }
 
     private static PlayerPresenter sInstance = null;
@@ -120,22 +123,6 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         }
     }
 
-    /**
-     * 切换播放模式
-     */
-    @Override
-    public void switchPlayMode(XmPlayListControl.PlayMode mode) {
-        if (mPlayerManger != null) {
-            mPlayerManger.setPlayMode(mode);
-            for (IPlayerCallback callback : mCallbacks) {//通知UI更新
-                callback.onPlayModeChange(mode);
-            }
-        }
-        //todo:
-        SharedPreferences.Editor editor = mPlayMode.edit();
-        editor.putInt(PLAY_MODE_SP_KEY, mode.ordinal());
-        editor.apply();
-    }
 
     /**
      * 获取播放列表
@@ -177,13 +164,27 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     }
 
     /**
-     * 反转播放列表
+     * 切换播放模式
      */
     @Override
-    public void reversePlayList() {
+    public void switchPlayMode(XmPlayListControl.PlayMode mode) {
+        mPlayModeCurrent = mode;
+        if (mPlayerManger != null) {
+            mPlayerManger.setPlayMode(mode);
+            for (IPlayerCallback callback : mCallbacks) {//通知UI更新
+                callback.onPlayModeChange(mode);
+            }
+        }
+    }
+
+    /**
+     * 切换播放列表顺序
+     */
+    @Override
+    public void switchPlayList(boolean isOrder) {
+        mPlayOrderCurrent = isOrder;
         List<Track> tracks = mPlayerManger.getPlayList();
         Collections.reverse(tracks);//反转
-        isOrder = !isOrder;
         mCurrentIndex = tracks.size() - mCurrentIndex - 1;//反转后当前播放节目的下边
         mPlayerManger.setPlayList(tracks, mCurrentIndex);//重新设置播放列表
         //更新UI
@@ -198,20 +199,22 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     @Override
     public void registerViewCallback(IPlayerCallback iPlayerCallback) {
         iPlayerCallback.onTrackUpdate(mCurrentTrack, mCurrentIndex);
-        if (mPlayMode != null) {
-            //todo:
-            //            int mode = mPlayMode.getInt(PLAY_MODE_SP_KEY, XmPlayListControl.PlayMode.PLAY_MODEL_LIST.ordinal());
-            //            iPlayerCallback.onPlayModeChange(XmPlayListControl.PlayMode.values()[mode]);
-            //            L.d(mode+"  "+XmPlayListControl.PlayMode.values()[mode].toString());
-        }
         if (!mCallbacks.contains(iPlayerCallback)) {
             mCallbacks.add(iPlayerCallback);
         }
+        int mode = mPlayerSp.getInt(PLAY_MODE_SP_KEY, mPlayModeDefault.ordinal());
+        boolean isOrder = mPlayerSp.getBoolean(PLAY_ORDER_SP_KEY, mPlayOrderDefault);
+        iPlayerCallback.onPlayModeChange(XmPlayListControl.PlayMode.values()[mode]);
+        iPlayerCallback.onPlayOrderChange(isOrder);
     }
 
     @Override
     public void unRegisterViewCallback(IPlayerCallback iPlayerCallback) {
         mCallbacks.remove(iPlayerCallback);
+        SharedPreferences.Editor editor = mPlayerSp.edit();
+        editor.putInt(PLAY_MODE_SP_KEY, mPlayModeCurrent.ordinal());
+        editor.putBoolean(PLAY_ORDER_SP_KEY, mPlayOrderCurrent);
+        editor.apply();
     }
 
     //region 广告回调开始

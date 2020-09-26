@@ -1,5 +1,6 @@
 package com.ck.adapter;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ck.R;
 import com.ck.base.BaseApplication;
+import com.ck.util.L;
 import com.ck.view.PlayerListPopupWindow;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 
@@ -44,12 +46,15 @@ public class PlayerPopupListAdapter extends RecyclerView.Adapter<PlayerPopupList
         //设置数据
         Track track = mData.get(position);
         TextView title = holder.itemView.findViewById(R.id.player_popup_item_title);
+        ImageView playingIcon = holder.itemView.findViewById(R.id.player_popup_item_playing_icon);
         title.setText(track.getTrackTitle());
         //设置当前播放节目的字体颜色和图标
         if (mPlayingIndex == position) {
-            ImageView playingIcon = holder.itemView.findViewById(R.id.player_popup_item_playing_icon);
             playingIcon.setVisibility(View.VISIBLE);
             title.setTextColor(BaseApplication.getAppContext().getResources().getColor(R.color.colorMain));
+        } else {
+            playingIcon.setVisibility(View.GONE);
+            title.setTextColor(Color.BLACK);
         }
     }
 

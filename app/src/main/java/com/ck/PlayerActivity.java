@@ -28,6 +28,7 @@ import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST;
@@ -48,8 +49,8 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
     private ImageView mPre;
     private ImageView mNext;
     private PlayerPresenter mPlayerPresenter;
-    private SimpleDateFormat mMmssFormat = new SimpleDateFormat("mm:ss");
-    private SimpleDateFormat mHhmmssFormat = new SimpleDateFormat("hh:mm:ss");
+    private SimpleDateFormat mMmssFormat = new SimpleDateFormat("mm:ss", Locale.CHINA);
+    private SimpleDateFormat mHhmmssFormat = new SimpleDateFormat("hh:mm:ss", Locale.CHINA);
     private String mTitleText;
     private PlayerViewPagerAdapter mPlayerViewPagerAdapter;
     private int mCurrentProgress = 0;//当前播放进度
@@ -57,6 +58,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
     private boolean mIsUserSlidPager = false;//是否用户滑动图片
     private static Map<XmPlayListControl.PlayMode, XmPlayListControl.PlayMode> sPlayMode = new HashMap<>();//寻找下一个播放模式
     private XmPlayListControl.PlayMode mCurrentPlayMode = PLAY_MODEL_LIST;//当前播放模式
+    private boolean mCurrentPlayOrder = false;//当前播放顺序
     private PlayerListPopupWindow mPlayerListPopupWindow;
 
     static {
@@ -78,9 +80,9 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
+        initView();
         mPlayerPresenter = PlayerPresenter.getInstance();
         mPlayerPresenter.registerViewCallback(this);
-        initView();
         mPlayerPresenter.getPlayList();
         initEven();
         initBgAnim();
@@ -257,9 +259,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
 
             @Override
             public void onPlayOrderClick() {
-                if (mPlayerPresenter != null) {
-                    mPlayerPresenter.reversePlayList();//反转播放列表
-                }
+                switchPlayOrder();
             }
         });
     }
@@ -274,6 +274,15 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
         XmPlayListControl.PlayMode playMode = sPlayMode.get(mCurrentPlayMode);//获取下一个播放模式
         if (mPlayerPresenter != null) {
             mPlayerPresenter.switchPlayMode(playMode);//切换播放模式
+        }
+    }
+
+    /**
+     * 切换播放顺序
+     */
+    private void switchPlayOrder() {
+        if (mPlayerPresenter != null) {
+            mPlayerPresenter.switchPlayList(!mCurrentPlayOrder);//切换播放列表顺序
         }
     }
 
@@ -311,6 +320,14 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
             }
         }
         mMode.setImageResource(resId);
+    }
+
+    /**
+     * 更换播放顺序图片
+     */
+    private void updatePlayerOrderImg() {
+        int resId = mCurrentPlayOrder ? R.drawable.selector_player_list_asc : R.drawable.selector_player_list_desc;
+        mList.setImageResource(resId);
     }
 
     @Override
@@ -374,19 +391,24 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
         if (mPlayerListPopupWindow != null) {
             mPlayerListPopupWindow.setListData(list);
         }
-
     }
 
     @Override
     public void onPlayModeChange(XmPlayListControl.PlayMode mode) {
         mCurrentPlayMode = mode;
-        mPlayerListPopupWindow.updatePlayMode(mCurrentPlayMode);
-        updatePlayModeImg();
+        if (mPlayerListPopupWindow != null) {
+            mPlayerListPopupWindow.updatePlayMode(mCurrentPlayMode);
+            updatePlayModeImg();
+        }
     }
 
     @Override
     public void onPlayOrderChange(boolean isOrder) {
-        mPlayerListPopupWindow.updatePlayOrder(isOrder);
+        mCurrentPlayOrder = isOrder;
+        if (mPlayerListPopupWindow != null) {
+            mPlayerListPopupWindow.updatePlayOrder(isOrder);
+            updatePlayerOrderImg();
+        }
     }
 
     @Override

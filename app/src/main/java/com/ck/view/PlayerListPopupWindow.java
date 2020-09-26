@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -26,6 +27,8 @@ public class PlayerListPopupWindow extends PopupWindow {
     private TextView mClose;
     private RecyclerView mRecyclerView;
     private PlayerPopupListAdapter mAdapter;
+    private LinearLayout mSwitchPlayMode;
+    private LinearLayout mSwitchPlayOrder;
     private ImageView mSwitchPlayModeBtn;
     private ImageView mSwitchPlayOrderBtn;
     private TextView mSwitchPlayModeText;
@@ -50,8 +53,10 @@ public class PlayerListPopupWindow extends PopupWindow {
     private void initView() {
         mClose = mView.findViewById(R.id.player_list_close);
         mRecyclerView = mView.findViewById(R.id.player_list_recycle_view);
+        mSwitchPlayMode = mView.findViewById(R.id.popup_switch_play_mode);
         mSwitchPlayModeBtn = mView.findViewById(R.id.popup_switch_play_mode_btn);
         mSwitchPlayModeText = mView.findViewById(R.id.popup_switch_play_mode_text);
+        mSwitchPlayOrder = mView.findViewById(R.id.popup_switch_play_order);
         mSwitchPlayOrderBtn = mView.findViewById(R.id.popup_switch_play_order_btn);
         mSwitchPlayOrderText = mView.findViewById(R.id.popup_switch_play_order_text);
         //设置布局
@@ -71,7 +76,7 @@ public class PlayerListPopupWindow extends PopupWindow {
             }
         });
         //切换播放模式
-        mSwitchPlayModeBtn.setOnClickListener(new View.OnClickListener() {
+        mSwitchPlayMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mPlayModeClickListener != null) {
@@ -80,7 +85,7 @@ public class PlayerListPopupWindow extends PopupWindow {
             }
         });
         //切换排序
-        mSwitchPlayOrderBtn.setOnClickListener(new View.OnClickListener() {
+        mSwitchPlayOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mPlayModeClickListener != null) {
@@ -146,11 +151,11 @@ public class PlayerListPopupWindow extends PopupWindow {
      */
     public void updatePlayOrder(boolean isOrder) {
         if (isOrder) {
-            mSwitchPlayOrderBtn.setImageResource(R.drawable.selector_player_list_desc);
-            mSwitchPlayOrderText.setText(R.string.play_order_desc_text);
-        } else {
             mSwitchPlayOrderBtn.setImageResource(R.drawable.selector_player_list_asc);
             mSwitchPlayOrderText.setText(R.string.play_order_asc_text);
+        } else {
+            mSwitchPlayOrderBtn.setImageResource(R.drawable.selector_player_list_desc);
+            mSwitchPlayOrderText.setText(R.string.play_order_desc_text);
         }
     }
 

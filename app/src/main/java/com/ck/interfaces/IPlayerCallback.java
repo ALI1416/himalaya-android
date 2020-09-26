@@ -58,12 +58,12 @@ public interface IPlayerCallback {
     void onProgressChange(int currentProgress, int total);
 
     /**
-     * 公告正在加载
+     * 广告正在加载
      */
     void onAdLoading();
 
     /**
-     * 公告结束
+     * 广告结束
      */
     void onAdFinished();
 
