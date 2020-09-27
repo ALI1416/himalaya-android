@@ -52,7 +52,12 @@ public interface IPlayerPresenter extends IBasePresenter<IPlayerCallback> {
     /**
      * 判断是否正在播放
      */
-    boolean isPlay();
+    boolean isPlaying();
+
+    /**
+     * 判断是否有播放列表
+     */
+    boolean hasPlayList();
 
     /**
      * 切换播放列表顺序

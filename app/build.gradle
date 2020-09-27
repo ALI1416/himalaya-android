@@ -45,11 +45,12 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
     implementation 'com.squareup.okio:okio:2.8.0'
-    implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     //glide插件 https://github.com/wasabeef/glide-transformations 增加了圆角、模糊等
     implementation 'jp.wasabeef:glide-transformations:4.2.0'
+    implementation 'com.github.hackware1993:MagicIndicator:1.5.0'//导航栏
+    implementation 'com.lcodecorex:tkrefreshlayout:1.0.7'//下拉刷新和上拉加载
     implementation files('libs/TingPhoneOpenSDK_7.2.6.jar')
     implementation files('libs/XmDownload_2.0.jar')
     implementation files('libs/XmlyOAuth2SDK_V2.0.jar')

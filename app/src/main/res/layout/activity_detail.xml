@@ -40,7 +40,7 @@
             android:layout_toEndOf="@id/detail_head_bg"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="标题标题标题标题标题标题标题标题标题标题标题"
+            android:text="标题"
             android:textSize="25sp"
             />
 
@@ -77,51 +77,73 @@
             />
     </RelativeLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/detail_control"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="30dp"
         android:layout_below="@id/detail_info"
         android:layout_marginTop="1dp"
         android:background="#f0f0f0"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
         >
 
-        <ImageView
-            android:id="@+id/detail_play_btn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_centerVertical="true"
-            android:src="@mipmap/play_black_normal"
-            />
-
-        <TextView
+        <LinearLayout
+            android:id="@+id/detail_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="5dp"
-            android:layout_toEndOf="@id/detail_play_btn"
-            android:text="继续播放"
+            >
+
+            <ImageView
+                android:id="@+id/detail_play_btn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/selector_detail_play"
+                />
+
+            <TextView
+                android:id="@+id/detail_play_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="5dp"
+                android:text="@string/detail_stop"
+                />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             />
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="25dp"
-            android:text="选集"
-            />
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="5dp"
+            >
 
-        <ImageView
-            android:layout_width="10dp"
-            android:layout_height="5dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:src="@mipmap/arrow_icon"
-            />
-    </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="5dp"
+                android:text="选集"
+                />
+
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="5dp"
+                android:layout_gravity="center_vertical"
+                android:src="@mipmap/arrow_icon"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/detail_container"

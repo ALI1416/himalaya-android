@@ -11,4 +11,6 @@
     <string name="play_mode_single_loop_text">单曲循环</string>
     <string name="play_order_desc_text">倒序</string>
     <string name="play_order_asc_text">顺序</string>
+    <string name="detail_play">正在播放</string>
+    <string name="detail_stop">已暂停</string>
 </resources>

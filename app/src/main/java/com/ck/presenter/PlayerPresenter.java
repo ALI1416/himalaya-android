@@ -37,6 +37,8 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     private XmPlayListControl.PlayMode mPlayModeCurrent = XmPlayListControl.PlayMode.PLAY_MODEL_LIST;
     private final boolean mPlayOrderDefault = false;
     private boolean mPlayOrderCurrent = false;
+    private static PlayerPresenter sInstance = null;
+    private boolean isPlayerListLoaded = false;
 
     private PlayerPresenter() {
         mPlayerManger = XmPlayerManager.getInstance(BaseApplication.getAppContext());
@@ -44,9 +46,6 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         mPlayerManger.addPlayerStatusListener(this);
         mPlayerSp = BaseApplication.getAppContext().getSharedPreferences(PLAYER_SP_NAME, Context.MODE_PRIVATE);
     }
-
-    private static PlayerPresenter sInstance = null;
-    private boolean isPlayerListLoaded = false;
 
     public static PlayerPresenter getInstance() {
         if (sInstance == null) {
@@ -159,8 +158,16 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
      * 判断是否正在播放
      */
     @Override
-    public boolean isPlay() {
+    public boolean isPlaying() {
         return mPlayerManger.isPlaying();
+    }
+
+    /**
+     * 判断是否有播放列表
+     */
+    @Override
+    public boolean hasPlayList() {
+        return isPlayerListLoaded;
     }
 
     /**

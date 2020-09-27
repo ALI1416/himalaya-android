@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!--target >=28 需要设置此权限 -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
+    <!--android:screenOrientation="portrait"竖屏，landscape竖屏-->
     <application
         android:name=".base.BaseApplication"
         android:allowBackup="true"
@@ -21,7 +21,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,8 +31,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".base.BaseActivity" />
-        <activity android:name=".DetailActivity" />
-        <activity android:name=".PlayerActivity" />
+        <activity
+            android:name=".DetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PlayerActivity"
+            android:screenOrientation="portrait" />
 
         <service
             android:name="com.ximalaya.ting.android.opensdk.player.service.XmPlayerService"

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,20 +23,28 @@ import com.ck.adapter.DetailAlbumListAdapter;
 import com.ck.base.BaseActivity;
 import com.ck.constant.RecommendConstant;
 import com.ck.interfaces.IAlbumDetailViewCallback;
+import com.ck.interfaces.IPlayerCallback;
 import com.ck.presenter.AlbumDetailPresenter;
 import com.ck.presenter.PlayerPresenter;
 import com.ck.view.UILoader;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
+import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
 import java.util.List;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
-public class DetailActivity extends BaseActivity implements IAlbumDetailViewCallback {
+public class DetailActivity extends BaseActivity implements IAlbumDetailViewCallback, IPlayerCallback {
     private static final String TAG = "DetailActivity";
     private final DetailActivity _this = this;
     private View mRootView;
+    private LinearLayout mDetailPlay;
+    private ImageView mDetailPlayBtn;
+    private TextView mDetailPlayText;
+    private PlayerPresenter mPlayerPresenter;
+    private List<Track> mCurrentTracks;
+    private static final int DEFAULT_PLAY_INDEX = 0;
 
     private void log(String msg) {
         Log.d(TAG, msg);
@@ -64,9 +73,14 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);//状态栏隐藏
         getWindow().setStatusBarColor(Color.TRANSPARENT);//设置状态栏颜色透明
         initView();
-        mAlbumDetailPresenter = AlbumDetailPresenter.getInstance();
+        mAlbumDetailPresenter = AlbumDetailPresenter.getInstance();//专辑详情
         mAlbumDetailPresenter.registerViewCallback(this);
+        mPlayerPresenter = PlayerPresenter.getInstance();//播放器详情
+        mPlayerPresenter.registerViewCallback(this);
+        updatePlayStatus(mPlayerPresenter.isPlaying());//更新播放状态
+        initEven();
     }
+
 
     private void initView() {
         mDetailCoverBg = findViewById(R.id.detail_cover_bg);
@@ -74,6 +88,9 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         mDetailTitle = findViewById(R.id.detail_title);
         mDetailAuthor = findViewById(R.id.detail_author);
         mDetailContainer = findViewById(R.id.detail_container);
+        mDetailPlay = findViewById(R.id.detail_play);
+        mDetailPlayBtn = findViewById(R.id.detail_play_btn);
+        mDetailPlayText = findViewById(R.id.detail_play_text);
         if (mUiLoader == null) {
             mUiLoader = new UILoader(this) {
                 @Override
@@ -101,6 +118,41 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         });
     }
 
+    private void initEven() {
+        //点击播放/暂停
+        mDetailPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mPlayerPresenter != null) {
+                    //判断是否有播放列表
+                    if (mPlayerPresenter.hasPlayList()) {
+                        handleHasPlayList();
+                    } else {
+                        handleNotPlayList();
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * 存在播放列表
+     */
+    private void handleHasPlayList() {
+        if (mPlayerPresenter.isPlaying()) {
+            mPlayerPresenter.pause();
+        } else {
+            mPlayerPresenter.play();
+        }
+    }
+
+    /**
+     * 不存在播放列表
+     */
+    private void handleNotPlayList() {
+        mPlayerPresenter.setPlayList(mCurrentTracks, DEFAULT_PLAY_INDEX);
+    }
+
     private View createSuccessView(ViewGroup container) {
         mRootView = LayoutInflater.from(this).inflate(R.layout.item_detail_list, container, false);
         mDetailAlbumRecyclerView = mRootView.findViewById(R.id.detail_album_recycle_view);
@@ -124,9 +176,39 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mAlbumDetailPresenter != null) {
+            mAlbumDetailPresenter.unRegisterViewCallback(this);
+        }
+        if (mPlayerPresenter != null) {
+            mPlayerPresenter.unRegisterViewCallback(this);
+        }
+    }
+
+    /**
+     * 更新播放状态
+     */
+    private void updatePlayStatus(boolean playing) {
+        if (playing) {
+            mDetailPlayBtn.setImageResource(R.drawable.selector_player_stop);
+            mDetailPlayText.setText(R.string.detail_play);
+        } else {
+            mDetailPlayBtn.setImageResource(R.drawable.selector_player_play);
+            mDetailPlayText.setText(R.string.detail_stop);
+        }
+    }
+
+    //region IAlbumDetailViewCallback
+    @Override
     public void onDetailListLoaded(List<Track> tracks) {
+        mCurrentTracks = tracks;
+        if (tracks == null || tracks.size() == 0) {
+            mUiLoader.updateStatus(UILoader.UIStatus.EMPTY);
+        } else {
+            mUiLoader.updateStatus(UILoader.UIStatus.SUCCESS);
+        }
         mDetailAlbumListAdapter.setData(tracks);
-        mUiLoader.updateStatus(UILoader.UIStatus.SUCCESS);
     }
 
     @Override
@@ -171,12 +253,73 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     public void onLoading() {
         mUiLoader.updateStatus(UILoader.UIStatus.LOADING);
     }
+    //endregion IAlbumDetailViewCallback
+
+    //region IPlayerCallback
+    @Override
+    public void onPlayerStart() {
+        updatePlayStatus(true);
+    }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mAlbumDetailPresenter != null) {
-            mAlbumDetailPresenter.unRegisterViewCallback(this);
-        }
+    public void onPlayPause() {
+        updatePlayStatus(false);
     }
+
+    @Override
+    public void onPlayStop() {
+        updatePlayStatus(false);
+    }
+
+    @Override
+    public void onPlayError() {
+
+    }
+
+    @Override
+    public void nextPlay(Track track) {
+
+    }
+
+    @Override
+    public void prePlay(Track track) {
+
+    }
+
+    @Override
+    public void onListLoaded(List<Track> list) {
+
+    }
+
+    @Override
+    public void onPlayModeChange(XmPlayListControl.PlayMode mode) {
+
+    }
+
+    @Override
+    public void onPlayOrderChange(boolean isOrder) {
+
+    }
+
+    @Override
+    public void onProgressChange(int currentProgress, int total) {
+
+    }
+
+    @Override
+    public void onAdLoading() {
+
+    }
+
+    @Override
+    public void onAdFinished() {
+
+    }
+
+    @Override
+    public void onTrackUpdate(Track track, int index) {
+
+    }
+    //endregion IPlayerCallback
+
 }

@@ -137,7 +137,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback {
         mPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mPlayerPresenter.isPlay()) {
+                if (mPlayerPresenter.isPlaying()) {
                     mPlayerPresenter.pause();
                 } else {
                     mPlayerPresenter.play();
