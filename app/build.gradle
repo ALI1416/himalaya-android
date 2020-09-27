@@ -42,15 +42,25 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
     implementation 'com.squareup.okio:okio:2.8.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    //glide图像处理 https://github.com/bumptech/glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     //glide插件 https://github.com/wasabeef/glide-transformations 增加了圆角、模糊等
     implementation 'jp.wasabeef:glide-transformations:4.2.0'
-    implementation 'com.github.hackware1993:MagicIndicator:1.5.0'//导航栏
-    implementation 'com.lcodecorex:tkrefreshlayout:1.0.7'//下拉刷新和上拉加载
+    //导航栏 https://github.com/hackware1993/MagicIndicator
+    implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
+    //下拉刷新和上拉加载 https://github.com/scwang90/SmartRefreshLayout
+    implementation 'com.scwang.smart:refresh-layout-kernel:2.0.1'      //核心必须依赖
+    implementation 'com.scwang.smart:refresh-header-classics:2.0.1'    //经典刷新头
+    implementation 'com.scwang.smart:refresh-header-radar:2.0.1'       //雷达刷新头
+    implementation 'com.scwang.smart:refresh-header-falsify:2.0.1'     //虚拟刷新头
+    implementation 'com.scwang.smart:refresh-header-material:2.0.1'    //谷歌刷新头
+    implementation 'com.scwang.smart:refresh-header-two-level:2.0.1'   //二级刷新头
+    implementation 'com.scwang.smart:refresh-footer-ball:2.0.1'        //球脉冲加载
+    implementation 'com.scwang.smart:refresh-footer-classics:2.0.1'    //经典加载
     implementation files('libs/TingPhoneOpenSDK_7.2.6.jar')
     implementation files('libs/XmDownload_2.0.jar')
     implementation files('libs/XmlyOAuth2SDK_V2.0.jar')
