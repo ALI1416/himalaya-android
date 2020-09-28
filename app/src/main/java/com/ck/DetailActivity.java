@@ -191,10 +191,10 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
      */
     private void updatePlayStatus(boolean playing) {
         if (playing) {
-            mDetailPlayBtn.setImageResource(R.drawable.selector_player_stop);
+            mDetailPlayBtn.setImageResource(R.drawable.selector_detail_stop);
             mDetailPlayText.setText(R.string.detail_play);
         } else {
-            mDetailPlayBtn.setImageResource(R.drawable.selector_player_play);
+            mDetailPlayBtn.setImageResource(R.drawable.selector_detail_play);
             mDetailPlayText.setText(R.string.detail_stop);
         }
     }
