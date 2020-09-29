@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +28,9 @@ import com.ck.interfaces.IPlayerCallback;
 import com.ck.presenter.AlbumDetailPresenter;
 import com.ck.presenter.PlayerPresenter;
 import com.ck.view.UILoader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnRefreshLoadMoreListener;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
@@ -38,13 +42,14 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 public class DetailActivity extends BaseActivity implements IAlbumDetailViewCallback, IPlayerCallback {
     private static final String TAG = "DetailActivity";
     private final DetailActivity _this = this;
-    private View mRootView;
+    private View mItemDetailListView;
     private LinearLayout mDetailPlay;
     private ImageView mDetailPlayBtn;
     private TextView mDetailPlayText;
     private PlayerPresenter mPlayerPresenter;
     private List<Track> mCurrentTracks;
     private static final int DEFAULT_PLAY_INDEX = 0;
+    private SmartRefreshLayout mRefresh;
 
     private void log(String msg) {
         Log.d(TAG, msg);
@@ -133,6 +138,24 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
                 }
             }
         });
+        //上拉加载和下拉刷新
+        mRefresh.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
+            //上拉加载
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                mAlbumDetailPresenter.loadMore();
+                toast("loadMore");
+                mRefresh.finishLoadMore();
+            }
+
+            //下拉刷新
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                mAlbumDetailPresenter.pullRefresh();
+                toast("refresh");
+                mRefresh.finishRefresh();
+            }
+        });
     }
 
     /**
@@ -154,8 +177,9 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     }
 
     private View createSuccessView(ViewGroup container) {
-        mRootView = LayoutInflater.from(this).inflate(R.layout.item_detail_list, container, false);
-        mDetailAlbumRecyclerView = mRootView.findViewById(R.id.detail_album_recycle_view);
+        mItemDetailListView = LayoutInflater.from(this).inflate(R.layout.item_detail_list, container, false);
+        mDetailAlbumRecyclerView = mItemDetailListView.findViewById(R.id.detail_album_recycle_view);
+        mRefresh = mItemDetailListView.findViewById(R.id.item_detail_refresh);
         //RecyclerView布局管理和适配器
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mDetailAlbumRecyclerView.setLayoutManager(layoutManager);
@@ -172,7 +196,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
                 startActivity(intent);
             }
         });
-        return mRootView;
+        return mItemDetailListView;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.ck.presenter;
 
+import com.ck.constant.RecommendConstant;
 import com.ck.interfaces.IAlbumDetailPresenter;
 import com.ck.interfaces.IAlbumDetailViewCallback;
 import com.ck.util.L;
@@ -19,6 +20,9 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
 
     private Album mTargetAlbum;
     private List<IAlbumDetailViewCallback> mCallbacks = new ArrayList<>();
+    private List<Track> mTracks = new ArrayList<>();
+    private long mCurrentAlbumId = -1;
+    private int mCurrentPages = 1;
 
     private AlbumDetailPresenter() {
     }
@@ -38,24 +42,35 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
 
     @Override
     public void getAlbumDetail(long albumId, int pages, int rows) {
+        mCurrentAlbumId = albumId;
+        mCurrentPages = pages;
+        mTracks.clear();
         updateLoading();
-        getData(albumId, pages, rows);
+        doLoaded2(true);
+        // getData2(albumId, pages, rows);
     }
 
-    private void getData(long albumId, int pages, int rows) {
+    private void doLoaded(final boolean isRefresh) {
         Map<String, String> map = new HashMap<>();
-        map.put(DTransferConstants.ALBUM_ID, String.valueOf(albumId));
+        map.put(DTransferConstants.ALBUM_ID, String.valueOf(mCurrentAlbumId));
         map.put(DTransferConstants.SORT, "asc");
-        map.put(DTransferConstants.PAGE, String.valueOf(pages));
-        map.put(DTransferConstants.PAGE_SIZE, String.valueOf(rows));
+        map.put(DTransferConstants.PAGE, String.valueOf(mCurrentPages));
+        map.put(DTransferConstants.PAGE_SIZE, String.valueOf(RecommendConstant.COUNT_ALBUM));
         CommonRequest.getTracks(map, new IDataCallBack<TrackList>() {
             @Override
             public void onSuccess(TrackList trackList) {
                 List<Track> tracks = trackList.getTracks();
-                for (Track track : tracks) {
+                for (Track track : mTracks) {
                     L.d(track.toString());
                 }
-                handleAlbumDetailResult(tracks);
+                if (isRefresh) {
+                    mTracks.clear();
+                    mCurrentPages = 1;
+                } else {
+                    mCurrentPages++;
+                }
+                mTracks.addAll(tracks);
+                handleAlbumDetailResult(mTracks);
             }
 
             @Override
@@ -67,17 +82,25 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
         });
     }
 
-    private void getData2(long albumId, int pages, int rows) {
-        List<Track> trackList = new ArrayList<>();
-        for (int i = 0; i < rows; i++) {
+    private void doLoaded2(final boolean isRefresh) {
+        List<Track> tracks = new ArrayList<>();
+        for (int i = 0; i < RecommendConstant.COUNT_ALBUM; i++) {
             Track track = new Track();
             track.setTrackTitle(i + "标题标题标题标题标题标题标题标题标题标题标题标题");
             track.setPlayCount(i);
             track.setDuration(100 * i);
             track.setUpdatedAt(1000000000L * i);
-            trackList.add(track);
+            track.setCoverUrlLarge("https://himg.bdimg.com/sys/portrait/item/pp.1.a6246271.hPNvzMm7d_71DIWDOusXCw?_t=1600244882165");
+            tracks.add(track);
         }
-        handleAlbumDetailResult(trackList);
+        if (isRefresh) {
+            mTracks.clear();
+            mCurrentPages = 1;
+        } else {
+            mCurrentPages++;
+        }
+        mTracks.addAll(tracks);
+        handleAlbumDetailResult(mTracks);
     }
 
     /**
@@ -114,12 +137,12 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
 
     @Override
     public void pullRefresh() {
-
+        doLoaded2(true);
     }
 
     @Override
     public void loadMore() {
-
+        doLoaded2(false);
     }
 
     /**

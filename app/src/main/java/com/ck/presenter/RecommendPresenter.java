@@ -42,7 +42,7 @@ public class RecommendPresenter implements IRecommendPresenter {
     @Override
     public void getRecommendList() {
         updateLoading();
-        getData();
+        getData2();
     }
 
     /**

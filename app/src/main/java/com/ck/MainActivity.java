@@ -1,7 +1,10 @@
 package com.ck;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
@@ -23,6 +26,7 @@ public class MainActivity extends FragmentActivity {
     private MagicIndicator mMagicIndicator;
     private ViewPager mContentPager;
     private IndicatorAdapter mIndicatorAdapter;
+    private RelativeLayout mSearchBtn;
 
     private void log(String msg) {
         Log.d(TAG, msg);
@@ -38,18 +42,6 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         initView();
         initEven();
-    }
-
-    private void initEven() {
-        //标题点击事件
-        mIndicatorAdapter.setOnIndicatorTapClickListener(new IndicatorAdapter.OnIndicatorTapClickListener() {
-            @Override
-            public void onTabClick(int index) {
-                if (mContentPager != null) {
-                    mContentPager.setCurrentItem(index);
-                }
-            }
-        });
     }
 
     private void initView() {
@@ -70,5 +62,28 @@ public class MainActivity extends FragmentActivity {
         //把ViewPager和indicator绑定到一起
         mMagicIndicator.setNavigator(commonNavigator);
         ViewPagerHelper.bind(mMagicIndicator, mContentPager);
+        //搜索
+        mSearchBtn = findViewById(R.id.search_btn);
     }
+
+    private void initEven() {
+        //标题点击事件
+        mIndicatorAdapter.setOnIndicatorTapClickListener(new IndicatorAdapter.OnIndicatorTapClickListener() {
+            @Override
+            public void onTabClick(int index) {
+                if (mContentPager != null) {
+                    mContentPager.setCurrentItem(index);
+                }
+            }
+        });
+        //搜索按钮点击
+        mSearchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(_this, SearchActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
 }
