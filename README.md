@@ -1,6 +1,5 @@
 # Himalaya
-喜马拉雅
-
+安卓-仿喜马拉雅
 
 ## 许可证
 [![License](https://img.shields.io/badge/license-BSD-brightgreen)](https://opensource.org/licenses/BSD-3-Clause)
