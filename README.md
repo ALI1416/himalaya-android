@@ -1,5 +1,9 @@
-# Himalaya
-安卓-仿喜马拉雅
+# himalaya 仿喜马拉雅(安卓)
+
+## 项目链接
+[Github](https://github.com/ALI1416/himalaya)
+
+[Gitee](https://gitee.com/ALI1416/himalaya)
 
 ## 许可证
 [![License](https://img.shields.io/badge/license-BSD-brightgreen)](https://opensource.org/licenses/BSD-3-Clause)
